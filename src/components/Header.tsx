@@ -15,6 +15,8 @@ import {
   BarChart2
 } from 'lucide-react';
 
+import { AuthModal } from './AuthModal';
+
 interface HeaderProps {
   activeTab: NavTab;
   setActiveTab: (tab: NavTab) => void;
@@ -106,7 +108,7 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, streakD
             })}
           </nav>
 
-          {/* Right side: streak + hamburger */}
+          {/* Right side: streak + auth + hamburger */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             {/* Streak pill */}
             <div
@@ -121,6 +123,9 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, streakD
               <Flame size={14} color="#F59E0B" fill="#F59E0B" />
               <span>{streakDays} Day Streak</span>
             </div>
+
+            {/* Optional Netlify Auth Button */}
+            <AuthModal />
 
             {/* Mobile hamburger */}
             <button

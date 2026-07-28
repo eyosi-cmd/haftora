@@ -21,6 +21,7 @@
     "cors": "^2.8.6",
     "express": "^5.2.1",
     "lucide-react": "^0.475.0",
+    "netlify-identity-widget": "^2.0.3",
     "node-cron": "^4.6.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
