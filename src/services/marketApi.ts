@@ -1,4 +1,4 @@
-// Real-time Market Data API Service for Haftora
+import { API_BASE_URL } from './tickerApi';
 
 export interface LiveMarketQuote {
   ticker: string;
@@ -18,9 +18,9 @@ export interface LiveMarketQuote {
 export async function fetchLiveQuote(ticker: string): Promise<LiveMarketQuote> {
   const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
-  // 1. First attempt: Query Express backend API endpoint if running full-stack
+  // 1. First attempt: Query backend API endpoint if running full-stack
   try {
-    const apiRes = await fetch(`/api/tickers/quote/${ticker}`, { signal: AbortSignal.timeout(2000) });
+    const apiRes = await fetch(`${API_BASE_URL}/tickers/quote/${ticker}`, { signal: AbortSignal.timeout(2000) });
     const contentType = apiRes.headers.get('content-type') || '';
 
     if (apiRes.ok && contentType.includes('application/json')) {

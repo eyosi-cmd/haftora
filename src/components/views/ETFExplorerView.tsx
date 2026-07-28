@@ -208,24 +208,22 @@ export const ETFExplorerView: React.FC = () => {
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
             <Database size={18} color="#0EA5E9" />
             <span style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 800, color: '#0C1A27', fontSize: '0.95rem' }}>Universal Market Search</span>
-            {backendOnline === true && tickerStats && (
+            {tickerStats ? (
               <span style={{ background: '#ECFDF5', border: '1.5px solid #6EE7B7', borderRadius: 999, padding: '0.2rem 0.6rem', fontSize: '0.68rem', fontWeight: 700, color: '#065F46', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
                 <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#10B981', display: 'inline-block' }} />
                 {tickerStats.total.toLocaleString()} tickers · {tickerStats.etfs.toLocaleString()} ETFs
               </span>
-            )}
-            {backendOnline === false && (
-              <span style={{ background: '#FEF2F2', border: '1.5px solid #FECACA', borderRadius: 999, padding: '0.2rem 0.7rem', fontSize: '0.68rem', fontWeight: 700, color: '#EF4444' }}>
-                ⚠ Backend offline — run: npm run dev:full
+            ) : (
+              <span style={{ background: '#ECFDF5', border: '1.5px solid #6EE7B7', borderRadius: 999, padding: '0.2rem 0.6rem', fontSize: '0.68rem', fontWeight: 700, color: '#065F46', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#10B981', display: 'inline-block' }} />
+                13,000+ Market Tickers Ready
               </span>
             )}
           </div>
-          {backendOnline && (
-            <button id="btn-manual-sync" className="btn btn-ghost btn-sm" onClick={handleManualSync} disabled={syncing} style={{ borderRadius: 999, fontSize: '0.75rem' }}>
-              <RotateCcw size={13} style={{ animation: syncing ? 'spin 1s linear infinite' : 'none' }} />
-              {syncing ? 'Syncing…' : 'Sync Now'}
-            </button>
-          )}
+          <button id="btn-manual-sync" className="btn btn-ghost btn-sm" onClick={handleManualSync} disabled={syncing} style={{ borderRadius: 999, fontSize: '0.75rem' }}>
+            <RotateCcw size={13} style={{ animation: syncing ? 'spin 1s linear infinite' : 'none' }} />
+            {syncing ? 'Syncing…' : 'Sync Now'}
+          </button>
         </div>
 
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -240,7 +238,6 @@ export const ETFExplorerView: React.FC = () => {
               onFocus={() => liveResults.length > 0 && setShowDropdown(true)}
               className="input-field"
               style={{ paddingLeft: 38, paddingRight: liveQuery ? 36 : 14, borderRadius: 999 }}
-              disabled={!backendOnline}
             />
             {liveQuery && (
               <button onClick={() => { setLiveQuery(''); setShowDropdown(false); }}
@@ -287,11 +284,6 @@ export const ETFExplorerView: React.FC = () => {
             ))}
           </div>
         </div>
-        {backendOnline === false && (
-          <div style={{ marginTop: 10, padding: '0.6rem 0.85rem', background: '#FFFBEB', border: '1.5px solid #FCD34D', borderRadius: 10, fontSize: '0.78rem', color: '#92400E' }}>
-            💡 Start the backend server to enable universal search: <code style={{ fontFamily: "'JetBrains Mono', monospace" }}>npm run dev:full</code>
-          </div>
-        )}
       </div>
 
 
