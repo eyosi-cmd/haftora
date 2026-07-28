@@ -118,12 +118,59 @@ export const LearningCenterView: React.FC<LearningCenterViewProps> = ({
 
         {/* Content */}
         <div className="card" style={{ lineHeight: 1.75, color: '#334155' }}>
-          {activeLesson.contentMarkdown.split('\n\n').map((p, i) => {
-            if (p.startsWith('### ')) return <h3 key={i} style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 800, fontSize: '1.15rem', color: '#0C1A27', borderBottom: '2px solid #BAE6FD', paddingBottom: 6, marginBottom: 8, marginTop: 16 }}>{p.replace('### ', '')}</h3>;
-            if (p.startsWith('#### ')) return <h4 key={i} style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 700, fontSize: '0.95rem', color: '#0284C7', marginTop: 12 }}>{p.replace('#### ', '')}</h4>;
-            if (p.startsWith('> ')) return <blockquote key={i} style={{ background: '#E0F2FE', borderLeft: '4px solid #0EA5E9', borderRadius: 10, padding: '0.9rem 1.1rem', color: '#0369A1', fontStyle: 'italic', margin: '8px 0' }}>{p.replace('> ', '')}</blockquote>;
-            return <p key={i} style={{ marginBottom: 6 }}>{p}</p>;
-          })}
+          {activeLesson.contentMarkdown
+            .split('\n')
+            .map(line => line.trim())
+            .filter(Boolean)
+            .map((line, i) => {
+              if (line.startsWith('### ')) {
+                return <h3 key={i} style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 800, fontSize: '1.2rem', color: '#0C1A27', borderBottom: '2px solid #BAE6FD', paddingBottom: 6, marginBottom: 10, marginTop: 18 }}>{line.replace('### ', '')}</h3>;
+              }
+              if (line.startsWith('#### ')) {
+                return <h4 key={i} style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 800, fontSize: '1rem', color: '#0284C7', marginTop: 14, marginBottom: 6 }}>{line.replace('#### ', '')}</h4>;
+              }
+              if (line.startsWith('> ')) {
+                return <blockquote key={i} style={{ background: '#F0F9FF', borderLeft: '4px solid #0EA5E9', borderRadius: 12, padding: '0.9rem 1.15rem', color: '#0369A1', fontStyle: 'italic', margin: '12px 0', fontSize: '0.95rem' }}>{line.replace('> ', '')}</blockquote>;
+              }
+              if (line.startsWith('* ') || line.startsWith('- ')) {
+                const text = line.replace(/^[\*\-]\s+/, '');
+                const parts = text.split(/(\*\*.*?\*\*)/g);
+                return (
+                  <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, margin: '6px 0 6px 12px', fontSize: '0.92rem', color: '#334155' }}>
+                    <span style={{ color: '#0EA5E9', fontWeight: 900, fontSize: '1.1rem', lineHeight: 1 }}>•</span>
+                    <div>
+                      {parts.map((pt, j) => {
+                        if (pt.startsWith('**') && pt.endsWith('**')) {
+                          return <strong key={j} style={{ color: '#0C1A27', fontWeight: 700 }}>{pt.slice(2, -2)}</strong>;
+                        }
+                        return pt;
+                      })}
+                    </div>
+                  </div>
+                );
+              }
+              if (line.startsWith('$$') && line.endsWith('$$')) {
+                const formula = line.slice(2, -2).replace(/\\text\{([^}]+)\}/g, '$1').replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, '($1 / $2)').replace(/\\approx/g, '≈');
+                return (
+                  <div key={i} style={{ background: '#ECFDF5', border: '1.5px solid #6EE7B7', borderRadius: 14, padding: '0.85rem 1.25rem', margin: '14px 0', textAlign: 'center', fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, fontSize: '1.05rem', color: '#065F46' }}>
+                    {formula}
+                  </div>
+                );
+              }
+
+              // Normal Paragraph
+              const parts = line.split(/(\*\*.*?\*\*)/g);
+              return (
+                <p key={i} style={{ marginBottom: 10, fontSize: '0.94rem' }}>
+                  {parts.map((pt, j) => {
+                    if (pt.startsWith('**') && pt.endsWith('**')) {
+                      return <strong key={j} style={{ color: '#0C1A27', fontWeight: 700 }}>{pt.slice(2, -2)}</strong>;
+                    }
+                    return pt;
+                  })}
+                </p>
+              );
+            })}
         </div>
 
         {/* Interactive compound slider */}

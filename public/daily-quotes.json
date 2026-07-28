@@ -3,154 +3,154 @@
     "ticker": "VOO",
     "price": 679.1,
     "changePercent": 0.65,
-    "lastUpdated": "2026-07-28T18:35:12.339Z",
+    "lastUpdated": "2026-07-28T18:35:34.055Z",
     "isRealTime": true
   },
   "SPY": {
     "ticker": "SPY",
     "price": 678.5,
     "changePercent": 0.62,
-    "lastUpdated": "2026-07-28T18:35:12.340Z",
+    "lastUpdated": "2026-07-28T18:35:34.056Z",
     "isRealTime": true
   },
   "IVV": {
     "ticker": "IVV",
     "price": 681.2,
     "changePercent": 0.64,
-    "lastUpdated": "2026-07-28T18:35:12.340Z",
+    "lastUpdated": "2026-07-28T18:35:34.056Z",
     "isRealTime": true
   },
   "SPLG": {
     "ticker": "SPLG",
     "price": 78.4,
     "changePercent": 0.63,
-    "lastUpdated": "2026-07-28T18:35:12.340Z",
+    "lastUpdated": "2026-07-28T18:35:34.056Z",
     "isRealTime": true
   },
   "VTI": {
     "ticker": "VTI",
     "price": 365.18,
     "changePercent": 0.58,
-    "lastUpdated": "2026-07-28T18:35:12.340Z",
+    "lastUpdated": "2026-07-28T18:35:34.056Z",
     "isRealTime": true
   },
   "ITOT": {
     "ticker": "ITOT",
     "price": 138.9,
     "changePercent": 0.56,
-    "lastUpdated": "2026-07-28T18:35:12.340Z",
+    "lastUpdated": "2026-07-28T18:35:34.056Z",
     "isRealTime": true
   },
   "SCHB": {
     "ticker": "SCHB",
     "price": 68.2,
     "changePercent": 0.57,
-    "lastUpdated": "2026-07-28T18:35:12.340Z",
+    "lastUpdated": "2026-07-28T18:35:34.056Z",
     "isRealTime": true
   },
   "SCHD": {
     "ticker": "SCHD",
     "price": 33.43,
     "changePercent": 0.22,
-    "lastUpdated": "2026-07-28T18:35:12.340Z",
+    "lastUpdated": "2026-07-28T18:35:34.056Z",
     "isRealTime": true
   },
   "VIG": {
     "ticker": "VIG",
     "price": 202.4,
     "changePercent": 0.35,
-    "lastUpdated": "2026-07-28T18:35:12.340Z",
+    "lastUpdated": "2026-07-28T18:35:34.056Z",
     "isRealTime": true
   },
   "VYM": {
     "ticker": "VYM",
     "price": 134.1,
     "changePercent": 0.18,
-    "lastUpdated": "2026-07-28T18:35:12.340Z",
+    "lastUpdated": "2026-07-28T18:35:34.056Z",
     "isRealTime": true
   },
   "DGRO": {
     "ticker": "DGRO",
     "price": 62.8,
     "changePercent": 0.28,
-    "lastUpdated": "2026-07-28T18:35:12.340Z",
+    "lastUpdated": "2026-07-28T18:35:34.056Z",
     "isRealTime": true
   },
   "QQQ": {
     "ticker": "QQQ",
     "price": 684.23,
     "changePercent": 1.12,
-    "lastUpdated": "2026-07-28T18:35:12.340Z",
+    "lastUpdated": "2026-07-28T18:35:34.056Z",
     "isRealTime": true
   },
   "VUG": {
     "ticker": "VUG",
     "price": 432.1,
     "changePercent": 0.95,
-    "lastUpdated": "2026-07-28T18:35:12.340Z",
+    "lastUpdated": "2026-07-28T18:35:34.056Z",
     "isRealTime": true
   },
   "XLK": {
     "ticker": "XLK",
     "price": 254.9,
     "changePercent": 1.35,
-    "lastUpdated": "2026-07-28T18:35:12.340Z",
+    "lastUpdated": "2026-07-28T18:35:34.056Z",
     "isRealTime": true
   },
   "SMH": {
     "ticker": "SMH",
     "price": 278.6,
     "changePercent": 1.85,
-    "lastUpdated": "2026-07-28T18:35:12.340Z",
+    "lastUpdated": "2026-07-28T18:35:34.056Z",
     "isRealTime": true
   },
   "VXUS": {
     "ticker": "VXUS",
     "price": 83.79,
     "changePercent": -0.15,
-    "lastUpdated": "2026-07-28T18:35:12.340Z",
+    "lastUpdated": "2026-07-28T18:35:34.056Z",
     "isRealTime": true
   },
   "VEA": {
     "ticker": "VEA",
     "price": 54.3,
     "changePercent": 0.12,
-    "lastUpdated": "2026-07-28T18:35:12.340Z",
+    "lastUpdated": "2026-07-28T18:35:34.056Z",
     "isRealTime": true
   },
   "VWO": {
     "ticker": "VWO",
     "price": 46.8,
     "changePercent": -0.32,
-    "lastUpdated": "2026-07-28T18:35:12.340Z",
+    "lastUpdated": "2026-07-28T18:35:34.056Z",
     "isRealTime": true
   },
   "BND": {
     "ticker": "BND",
     "price": 72.46,
     "changePercent": 0.05,
-    "lastUpdated": "2026-07-28T18:35:12.340Z",
+    "lastUpdated": "2026-07-28T18:35:34.056Z",
     "isRealTime": true
   },
   "AGG": {
     "ticker": "AGG",
     "price": 98.6,
     "changePercent": 0.04,
-    "lastUpdated": "2026-07-28T18:35:12.340Z",
+    "lastUpdated": "2026-07-28T18:35:34.056Z",
     "isRealTime": true
   },
   "SCHP": {
     "ticker": "SCHP",
     "price": 52.3,
     "changePercent": 0.08,
-    "lastUpdated": "2026-07-28T18:35:12.340Z",
+    "lastUpdated": "2026-07-28T18:35:34.056Z",
     "isRealTime": true
   },
   "BNDX": {
     "ticker": "BNDX",
     "price": 49.1,
     "changePercent": 0.02,
-    "lastUpdated": "2026-07-28T18:35:12.340Z",
+    "lastUpdated": "2026-07-28T18:35:34.056Z",
     "isRealTime": true
   }
 }
