@@ -104,7 +104,39 @@ router.get('/stats', async (_req: Request, res: Response) => {
   } catch (err) {
     res.status(500).json({ error: String(err) });
   }
+// ── GET /api/tickers/quote/:symbol ─────────────────────────────────────────
+router.get('/quote/:symbol', async (req: Request, res: Response) => {
+  try {
+    const symbol = req.params.symbol.toUpperCase();
+    const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+    const yahooUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1m&range=1d`;
+    const resp = await fetch(yahooUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+    if (resp.ok) {
+      const data = (await resp.json()) as any;
+      const meta = data?.chart?.result?.[0]?.meta;
+      if (meta && meta.regularMarketPrice) {
+        const price = meta.regularMarketPrice;
+        const prevClose = meta.chartPreviousClose || meta.previousClose || price;
+        const change = price - prevClose;
+        const changePercent = (change / prevClose) * 100;
+
+        return res.json({
+          ticker: symbol,
+          price: Number(price.toFixed(2)),
+          change: Number(change.toFixed(2)),
+          changePercent: Number(changePercent.toFixed(2)),
+          lastUpdated: timestamp,
+          isRealTime: true,
+        });
+      }
+    }
+    return res.status(502).json({ error: `Quote unavailable for ${symbol}` });
+  } catch (err) {
+    return res.status(500).json({ error: String(err) });
+  }
 });
+
 
 // ── GET /api/tickers/:symbol ───────────────────────────────────────────────
 router.get('/:symbol', async (req: Request, res: Response) => {

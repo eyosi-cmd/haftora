@@ -18,8 +18,21 @@ export interface LiveMarketQuote {
 export async function fetchLiveQuote(ticker: string): Promise<LiveMarketQuote> {
   const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
+  // 1. First attempt: Query our Express backend API endpoint (bypasses browser CORS)
   try {
-    // Attempt free CORS proxy / public Yahoo quote endpoint
+    const apiRes = await fetch(`/api/tickers/quote/${ticker}`, { signal: AbortSignal.timeout(3000) });
+    if (apiRes.ok) {
+      const data = await apiRes.json();
+      if (data && data.price) {
+        return data as LiveMarketQuote;
+      }
+    }
+  } catch {
+    // Backend API offline or timed out — fall through
+  }
+
+  // 2. Second attempt: Direct Yahoo Finance query
+  try {
     const res = await fetch(
       `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1m&range=1d`,
       { headers: { 'Accept': 'application/json' } }

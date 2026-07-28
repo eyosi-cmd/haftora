@@ -1,10 +1,15 @@
-import React, { useState } from 'react';
+import { SavedScenario } from '../../types';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
-import { AlertTriangle, TrendingDown, Clock, DollarSign, CheckCircle2, XCircle, Home, Target, TrendingUp, GraduationCap } from 'lucide-react';
+import { AlertTriangle, TrendingDown, Clock, DollarSign, CheckCircle2, XCircle, Home, Target, TrendingUp, GraduationCap, Save, Check } from 'lucide-react';
 
-export const PortfolioBuilderView: React.FC = () => {
+interface PortfolioBuilderViewProps {
+  onSaveScenario?: (s: SavedScenario) => void;
+}
+
+export const PortfolioBuilderView: React.FC<PortfolioBuilderViewProps> = ({ onSaveScenario }) => {
   const [goal, setGoal]   = useState('retirement');
   const [model, setModel] = useState<'conservative'|'moderate'|'aggressive'>('moderate');
+  const [saved, setSaved] = useState(false);
 
   const goals = [
     { id: 'retirement', label: 'Retirement (20+ Yrs)', icon: <Target size={16}/> },
@@ -19,6 +24,21 @@ export const PortfolioBuilderView: React.FC = () => {
     aggressive:   { stocks: 90, bonds: 10, cash: 0,  ret: '9.0%–11.5%',d08: '-44.2%', d20: '-28.5%', risk: 'High',     desc: 'Maximum compounding via global equities. For 15+ year horizons.' },
   };
 
+  const handleSave = () => {
+    if (!onSaveScenario) return;
+    const selectedGoalObj = goals.find(g => g.id === goal);
+    onSaveScenario({
+      id: 'port-' + Date.now(),
+      title: `Portfolio (${model.toUpperCase()} - ${selectedGoalObj?.label || goal})`,
+      type: 'portfolio',
+      createdAt: new Date().toLocaleDateString(),
+      inputs: { goal, model, stocks: models[model].stocks, bonds: models[model].bonds, cash: models[model].cash },
+      projectedValue: 100000,
+    });
+    setSaved(true);
+    setTimeout(() => setSaved(false), 3000);
+  };
+
   const m = models[model];
   const COLORS = ['#0EA5E9','#6366F1','#F59E0B'];
   const pieData = [
@@ -29,9 +49,16 @@ export const PortfolioBuilderView: React.FC = () => {
 
   return (
     <div className="animate-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-      <div>
-        <h1 id="portfolio-title" style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 900, fontSize: 'clamp(1.4rem,3vw,2rem)', color: '#0C1A27' }}>Goal-Based Portfolio Simulator</h1>
-        <p style={{ color: '#64748B', marginTop: 4 }}>Learn how asset allocation shapes risk, volatility, and long-term returns.</p>
+      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
+        <div>
+          <h1 id="portfolio-title" style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 900, fontSize: 'clamp(1.4rem,3vw,2rem)', color: '#0C1A27' }}>Goal-Based Portfolio Simulator</h1>
+          <p style={{ color: '#64748B', marginTop: 4 }}>Learn how asset allocation shapes risk, volatility, and long-term returns.</p>
+        </div>
+        {onSaveScenario && (
+          <button id="btn-save-portfolio" onClick={handleSave} className="btn btn-primary btn-sm" style={{ borderRadius: 999 }}>
+            {saved ? <><Check size={14} /> Allocation Saved!</> : <><Save size={14} /> Save Allocation</>}
+          </button>
+        )}
       </div>
 
       {/* Goal selector */}

@@ -1,12 +1,46 @@
-import React, { useState } from 'react';
+import { SavedScenario } from '../../types';
 import {
   calculateCompoundInterest, calculateDCA,
   calculateDividendGrowth, formatCurrency
 } from '../../utils/financialMath';
-import { Calculator } from 'lucide-react';
+import { Calculator, Save, Check } from 'lucide-react';
 
-export const CalculatorsView: React.FC = () => {
+interface CalculatorsViewProps {
+  onSaveScenario?: (s: SavedScenario) => void;
+}
+
+export const CalculatorsView: React.FC<CalculatorsViewProps> = ({ onSaveScenario }) => {
   const [tab, setTab] = useState<'compound'|'dca'|'drip'|'inflation'>('compound');
+  const [saved, setSaved] = useState(false);
+
+  const handleSaveCalculation = () => {
+    if (!onSaveScenario) return;
+    let title = 'Compound Interest Calculation';
+    let val = ciFinal.nominalBalance;
+
+    if (tab === 'dca') {
+      title = 'DCA Simulation';
+      val = dcaFinal.dcaPortfolioValue;
+    } else if (tab === 'drip') {
+      title = 'Dividend DRIP Calculation';
+      val = dripFinal.portfolioValue;
+    } else if (tab === 'inflation') {
+      title = 'Inflation Impact Calculation';
+      val = infFuture;
+    }
+
+    onSaveScenario({
+      id: 'calc-' + Date.now(),
+      title,
+      type: 'compound',
+      createdAt: new Date().toLocaleDateString(),
+      inputs: { tab, ciInit, ciMo, ciRate, ciYrs },
+      projectedValue: val,
+    });
+
+    setSaved(true);
+    setTimeout(() => setSaved(false), 3000);
+  };
 
   // Compound Interest
   const [ciInit, setCiInit]       = useState(1000);
@@ -62,11 +96,18 @@ export const CalculatorsView: React.FC = () => {
 
   return (
     <div className="animate-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-      <div>
-        <h1 id="calculators-title" style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 900, fontSize: 'clamp(1.4rem,3vw,2rem)', color: '#0C1A27', display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Calculator size={26} color="#0EA5E9" /> Financial Calculator Suite
-        </h1>
-        <p style={{ color: '#64748B', marginTop: 4 }}>Interactive tools for compound interest, DCA, dividends, and inflation.</p>
+      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
+        <div>
+          <h1 id="calculators-title" style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 900, fontSize: 'clamp(1.4rem,3vw,2rem)', color: '#0C1A27', display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Calculator size={26} color="#0EA5E9" /> Financial Calculator Suite
+          </h1>
+          <p style={{ color: '#64748B', marginTop: 4 }}>Interactive tools for compound interest, DCA, dividends, and inflation.</p>
+        </div>
+        {onSaveScenario && (
+          <button id="btn-save-calc" onClick={handleSaveCalculation} className="btn btn-primary btn-sm" style={{ borderRadius: 999 }}>
+            {saved ? <><Check size={14} /> Calculation Saved!</> : <><Save size={14} /> Save Calculation</>}
+          </button>
+        )}
       </div>
 
       {/* Tab bar */}

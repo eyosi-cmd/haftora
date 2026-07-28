@@ -69,5 +69,6 @@ export interface UserProgressState {
   completedLessonIds: string[];
   quizScores: Record<string, number>; // lessonId -> score
   streakDays: number;
+  lastActiveDate?: string; // YYYY-MM-DD
   savedScenarios: SavedScenario[];
 }

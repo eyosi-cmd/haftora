@@ -18,12 +18,37 @@ export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<NavTab>('dashboard');
   const [selectedLessonId, setSelectedLessonId] = useState<string | null>(null);
 
-  // Initialize User Progress State with LocalStorage persistence
+  const getTodayString = () => new Date().toISOString().split('T')[0];
+  const getYesterdayString = () => {
+    const d = new Date();
+    d.setDate(d.getDate() - 1);
+    return d.toISOString().split('T')[0];
+  };
+
+  // Initialize User Progress State with real calendar date streak tracking
   const [progress, setProgress] = useState<UserProgressState>(() => {
+    const today = getTodayString();
+    const yesterday = getYesterdayString();
     const saved = localStorage.getItem(STORAGE_KEY);
+
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved) as UserProgressState;
+        const lastActive = parsed.lastActiveDate;
+
+        let streak = parsed.streakDays || 1;
+        if (!lastActive) {
+          streak = 1;
+        } else if (lastActive !== today && lastActive !== yesterday) {
+          // Missed a day — reset streak to 1
+          streak = 1;
+        }
+
+        return {
+          ...parsed,
+          streakDays: streak,
+          lastActiveDate: lastActive || today,
+        };
       } catch (e) {
         console.error('Failed to parse user progress', e);
       }
@@ -31,10 +56,28 @@ export const App: React.FC = () => {
     return {
       completedLessonIds: [],
       quizScores: {},
-      streakDays: 3, // Default encouraging starter streak
+      streakDays: 1,
+      lastActiveDate: today,
       savedScenarios: []
     };
   });
+
+  // Helper to record activity and increment streak on calendar days
+  const recordActivity = () => {
+    const today = getTodayString();
+    const yesterday = getYesterdayString();
+
+    setProgress((prev) => {
+      if (prev.lastActiveDate === today) return prev; // Already recorded today
+
+      const newStreak = prev.lastActiveDate === yesterday ? prev.streakDays + 1 : 1;
+      return {
+        ...prev,
+        lastActiveDate: today,
+        streakDays: newStreak,
+      };
+    });
+  };
 
   // Persist state changes
   useEffect(() => {
@@ -43,6 +86,7 @@ export const App: React.FC = () => {
 
   // Handler for lesson completion
   const handleCompleteLesson = (lessonId: string, quizScore: number) => {
+    recordActivity();
     setProgress((prev) => {
       const alreadyCompleted = prev.completedLessonIds.includes(lessonId);
       const updatedCompleted = alreadyCompleted
@@ -62,6 +106,7 @@ export const App: React.FC = () => {
 
   // Handler for saving scenarios
   const handleSaveScenario = (scenario: SavedScenario) => {
+    recordActivity();
     setProgress((prev) => ({
       ...prev,
       savedScenarios: [scenario, ...prev.savedScenarios]
@@ -83,6 +128,7 @@ export const App: React.FC = () => {
         completedLessonIds: [],
         quizScores: {},
         streakDays: 1,
+        lastActiveDate: getTodayString(),
         savedScenarios: []
       };
       setProgress(resetState);
@@ -138,11 +184,11 @@ export const App: React.FC = () => {
         )}
 
         {activeTab === 'portfolio-builder' && (
-          <PortfolioBuilderView />
+          <PortfolioBuilderView onSaveScenario={handleSaveScenario} />
         )}
 
         {activeTab === 'calculators' && (
-          <CalculatorsView />
+          <CalculatorsView onSaveScenario={handleSaveScenario} />
         )}
 
         {activeTab === 'mistakes' && (

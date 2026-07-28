@@ -37,3 +37,6 @@ playwright-report/
 
 # TypeScript cache
 *.tsbuildinfo
+
+# Local Netlify folder
+.netlify
