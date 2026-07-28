@@ -106,3 +106,68 @@ export async function fetchLiveQuote(ticker: string): Promise<LiveMarketQuote> {
     isRealTime: false
   };
 }
+
+/**
+ * ── DAILY AUTOMATED QUOTE REFRESH ENGINE ─────────────────────────────
+ * Runs once every 24 hours to automatically update & cache real-time quote values
+ * for all ETF cards across the application.
+ */
+const DAILY_SYNC_KEY = 'haftora_daily_quote_sync_time';
+const DAILY_CACHE_KEY = 'haftora_cached_daily_quotes';
+
+export async function checkAndRunDailyQuoteSync(tickers: string[]): Promise<Record<string, LiveMarketQuote>> {
+  if (typeof window === 'undefined') return {};
+
+  const lastSyncStr = localStorage.getItem(DAILY_SYNC_KEY);
+  const now = Date.now();
+  const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+
+  // Retrieve existing cache
+  let cachedQuotes: Record<string, LiveMarketQuote> = {};
+  try {
+    const raw = localStorage.getItem(DAILY_CACHE_KEY);
+    if (raw) cachedQuotes = JSON.parse(raw);
+  } catch {
+    cachedQuotes = {};
+  }
+
+  // Check if 24 hours have passed or cache is empty
+  const needsSync = !lastSyncStr || (now - Number(lastSyncStr)) > ONE_DAY_MS || Object.keys(cachedQuotes).length === 0;
+
+  if (needsSync && tickers.length > 0) {
+    console.log('[DailyQuoteSync] Running once-a-day automated market quote update...');
+    const updated: Record<string, LiveMarketQuote> = { ...cachedQuotes };
+
+    // Fetch quotes in small parallel batches of 5 to avoid browser network congestion
+    for (let i = 0; i < tickers.length; i += 5) {
+      const batch = tickers.slice(i, i + 5);
+      await Promise.all(
+        batch.map(async (sym) => {
+          updated[sym] = await fetchLiveQuote(sym);
+        })
+      );
+    }
+
+    localStorage.setItem(DAILY_CACHE_KEY, JSON.stringify(updated));
+    localStorage.setItem(DAILY_SYNC_KEY, now.toString());
+    console.log(`[DailyQuoteSync] ✅ Successfully updated ${Object.keys(updated).length} ETF quotes for today.`);
+    return updated;
+  }
+
+  return cachedQuotes;
+}
+
+export function getDailyCachedQuote(ticker: string): LiveMarketQuote | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = localStorage.getItem(DAILY_CACHE_KEY);
+    if (raw) {
+      const cache = JSON.parse(raw);
+      return cache[ticker] || null;
+    }
+  } catch {
+    return null;
+  }
+  return null;
+}
+

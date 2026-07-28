@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { ETFData } from '../../types';
 import { ETF_DATASET } from '../../data/etfData';
 import { calculateFeeImpact, formatCurrency, formatPercent } from '../../utils/financialMath';
-import { fetchLiveQuote, LiveMarketQuote } from '../../services/marketApi';
+import { fetchLiveQuote, checkAndRunDailyQuoteSync, LiveMarketQuote } from '../../services/marketApi';
 import { searchTickers, getTickerStats, triggerSync, TickerResult, TickerStats } from '../../services/tickerApi';
 import {
   Search, PieChart, DollarSign, TrendingUp, ArrowUpRight, ArrowDownRight,
@@ -139,11 +139,17 @@ export const ETFExplorerView: React.FC = () => {
 
   const refreshMarketData = async () => {
     setIsRefreshing(true);
-    const updated: Record<string, LiveMarketQuote> = {};
-    for (const etf of ETF_DATASET) {
-      updated[etf.ticker] = await fetchLiveQuote(etf.ticker);
+    const allTickers = ETF_DATASET.map(e => e.ticker);
+    const dailyQuotes = await checkAndRunDailyQuoteSync(allTickers);
+    if (Object.keys(dailyQuotes).length > 0) {
+      setLiveQuotes(dailyQuotes);
+    } else {
+      const updated: Record<string, LiveMarketQuote> = {};
+      for (const etf of ETF_DATASET) {
+        updated[etf.ticker] = await fetchLiveQuote(etf.ticker);
+      }
+      setLiveQuotes(updated);
     }
-    setLiveQuotes(updated);
     setIsRefreshing(false);
   };
 
