@@ -18,26 +18,28 @@ export interface LiveMarketQuote {
 export async function fetchLiveQuote(ticker: string): Promise<LiveMarketQuote> {
   const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
-  // 1. First attempt: Query our Express backend API endpoint (bypasses browser CORS)
+  // 1. First attempt: Query Express backend API endpoint if running full-stack
   try {
-    const apiRes = await fetch(`/api/tickers/quote/${ticker}`, { signal: AbortSignal.timeout(3000) });
-    if (apiRes.ok) {
+    const apiRes = await fetch(`/api/tickers/quote/${ticker}`, { signal: AbortSignal.timeout(2000) });
+    const contentType = apiRes.headers.get('content-type') || '';
+
+    // Only parse JSON if server returned application/json (prevents <!DOCTYPE index.html SyntaxError)
+    if (apiRes.ok && contentType.includes('application/json')) {
       const data = await apiRes.json();
       if (data && data.price) {
         return data as LiveMarketQuote;
       }
     }
   } catch {
-    // Backend API offline or timed out — fall through
+    // Backend API offline or static Netlify host — fall through
   }
 
-  // 2. Second attempt: Direct Yahoo Finance query
+  // 2. Second attempt: Fetch via CORS-friendly proxy (allorigins) to prevent browser CORS block
   try {
-    const res = await fetch(
-      `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1m&range=1d`,
-      { headers: { 'Accept': 'application/json' } }
-    );
+    const targetUrl = encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1m&range=1d`);
+    const proxyUrl  = `https://api.allorigins.win/raw?url=${targetUrl}`;
 
+    const res = await fetch(proxyUrl, { signal: AbortSignal.timeout(2500) });
     if (res.ok) {
       const data = await res.json();
       const meta = data?.chart?.result?.[0]?.meta;
@@ -57,8 +59,8 @@ export async function fetchLiveQuote(ticker: string): Promise<LiveMarketQuote> {
         };
       }
     }
-  } catch (error) {
-    console.warn(`Live API fetch failed for ${ticker}, using updated base market prices.`, error);
+  } catch {
+    // Online API proxy unavailable — fall back gracefully below
   }
 
   // Updated Base Market Prices (Live Online Data)
