@@ -23,11 +23,13 @@ export async function fetchLiveQuote(ticker: string): Promise<LiveMarketQuote> {
     const apiRes = await fetch(`/api/tickers/quote/${ticker}`, { signal: AbortSignal.timeout(2000) });
     const contentType = apiRes.headers.get('content-type') || '';
 
-    // Only parse JSON if server returned application/json (prevents <!DOCTYPE index.html SyntaxError)
     if (apiRes.ok && contentType.includes('application/json')) {
-      const data = await apiRes.json();
-      if (data && data.price) {
-        return data as LiveMarketQuote;
+      const text = await apiRes.text();
+      if (text.trim().startsWith('{')) {
+        const data = JSON.parse(text);
+        if (data && data.price) {
+          return data as LiveMarketQuote;
+        }
       }
     }
   } catch {
@@ -41,22 +43,25 @@ export async function fetchLiveQuote(ticker: string): Promise<LiveMarketQuote> {
 
     const res = await fetch(proxyUrl, { signal: AbortSignal.timeout(2500) });
     if (res.ok) {
-      const data = await res.json();
-      const meta = data?.chart?.result?.[0]?.meta;
-      if (meta && meta.regularMarketPrice) {
-        const price = meta.regularMarketPrice;
-        const prevClose = meta.chartPreviousClose || meta.previousClose || price;
-        const change = price - prevClose;
-        const changePercent = (change / prevClose) * 100;
+      const text = await res.text();
+      if (text.trim().startsWith('{')) {
+        const data = JSON.parse(text);
+        const meta = data?.chart?.result?.[0]?.meta;
+        if (meta && meta.regularMarketPrice) {
+          const price = meta.regularMarketPrice;
+          const prevClose = meta.chartPreviousClose || meta.previousClose || price;
+          const change = price - prevClose;
+          const changePercent = (change / prevClose) * 100;
 
-        return {
-          ticker,
-          price: Number(price.toFixed(2)),
-          change: Number(change.toFixed(2)),
-          changePercent: Number(changePercent.toFixed(2)),
-          lastUpdated: timestamp,
-          isRealTime: true
-        };
+          return {
+            ticker,
+            price: Number(price.toFixed(2)),
+            change: Number(change.toFixed(2)),
+            changePercent: Number(changePercent.toFixed(2)),
+            lastUpdated: timestamp,
+            isRealTime: true
+          };
+        }
       }
     }
   } catch {

@@ -31,11 +31,16 @@ const BASE = '/api';
 
 async function apiFetch<T>(path: string): Promise<T | null> {
   try {
-    const res = await fetch(`${BASE}${path}`, { signal: AbortSignal.timeout(5000) });
-    if (!res.ok) return null;
-    return res.json() as Promise<T>;
+    const res = await fetch(`${BASE}${path}`, { signal: AbortSignal.timeout(3000) });
+    const contentType = res.headers.get('content-type') || '';
+    if (!res.ok || !contentType.includes('application/json')) return null;
+
+    const text = await res.text();
+    if (!text.trim().startsWith('{') && !text.trim().startsWith('[')) return null;
+
+    return JSON.parse(text) as T;
   } catch {
-    return null; // Backend offline — fail gracefully
+    return null; // Backend offline / static SPA redirect — fail gracefully
   }
 }
 
@@ -101,8 +106,16 @@ export async function getTickerStats(): Promise<TickerStats | null> {
 
 export async function triggerSync(): Promise<{ status: string; message: string } | null> {
   try {
-    const res = await fetch(`${BASE}/tickers/sync`, { method: 'POST' });
-    return res.json();
+    const res = await fetch(`${BASE}/tickers/sync`, { method: 'POST', signal: AbortSignal.timeout(3000) });
+    const contentType = res.headers.get('content-type') || '';
+    if (!res.ok || !contentType.includes('application/json')) {
+      return { status: 'static', message: 'Running on $0 Netlify static hosting (Wasm DB)' };
+    }
+    const text = await res.text();
+    if (!text.trim().startsWith('{')) {
+      return { status: 'static', message: 'Running on $0 Netlify static hosting (Wasm DB)' };
+    }
+    return JSON.parse(text);
   } catch {
     return { status: 'static', message: 'Running on $0 Netlify static hosting (Wasm DB)' };
   }
