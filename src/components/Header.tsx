@@ -37,6 +37,14 @@ const navItems: { id: NavTab; label: string; icon: React.ReactNode }[] = [
 
 export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, streakDays }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [showPwaBanner, setShowPwaBanner] = useState(() => {
+    return localStorage.getItem('haftora_pwa_banner_dismissed') !== 'true';
+  });
+
+  const dismissPwaBanner = () => {
+    localStorage.setItem('haftora_pwa_banner_dismissed', 'true');
+    setShowPwaBanner(false);
+  };
 
   const handleNav = (tab: NavTab) => {
     setActiveTab(tab);
@@ -45,6 +53,39 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, streakD
 
   return (
     <>
+      {/* ── MOBILE PWA INSTALLATION BANNER ── */}
+      {showPwaBanner && (
+        <div
+          id="pwa-install-banner"
+          style={{
+            background: 'linear-gradient(90deg, #0284C7 0%, #0EA5E9 100%)',
+            color: 'white',
+            padding: '0.45rem 1rem',
+            fontSize: '0.78rem',
+            fontWeight: 700,
+            display: 'flex',
+            alignItems: 'center',
+            justify: 'space-between',
+            gap: 10,
+            borderBottom: '1px solid #7DD3FC'
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1, minWidth: 0 }}>
+            <span style={{ fontSize: '1rem' }}>📲</span>
+            <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <strong>Add Haftora to Home Screen</strong> for 1-tap access & offline learning!
+            </span>
+          </div>
+          <button
+            onClick={dismissPwaBanner}
+            style={{ background: 'rgba(255,255,255,0.2)', border: 'none', borderRadius: '50%', color: 'white', width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0 }}
+            title="Dismiss"
+          >
+            <X size={12} />
+          </button>
+        </div>
+      )}
+
       {/* ── TOP BAR ── */}
       <header
         id="app-header"

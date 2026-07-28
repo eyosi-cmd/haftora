@@ -10,6 +10,54 @@ interface ProfileViewProps {
 }
 
 export const ProfileView: React.FC<ProfileViewProps> = ({ progress, onResetProgress, onDeleteScenario }) => {
+  const [socialCardUrl, setSocialCardUrl] = React.useState<string | null>(null);
+
+  const generateSocialCard = (streak: number, unlockedBadges: number, completedLessons: number) => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 1200;
+    canvas.height = 630;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Gradient Background
+    const grad = ctx.createLinearGradient(0, 0, 1200, 630);
+    grad.addColorStop(0, '#0C4A6E');
+    grad.addColorStop(1, '#0284C7');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 1200, 630);
+
+    // Card Glass Box
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.12)';
+    ctx.roundRect(60, 60, 1080, 510, 24);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    // Brand Header
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = 'bold 36px sans-serif';
+    ctx.fillText('📈 HAFTORA INVESTOR BADGE', 100, 130);
+
+    // Streak Highlight
+    ctx.fillStyle = '#FCD34D';
+    ctx.font = 'bold 72px sans-serif';
+    ctx.fillText(`🔥 ${streak}-DAY STREAK!`, 100, 240);
+
+    // Stats Text
+    ctx.fillStyle = '#E0F2FE';
+    ctx.font = '28px sans-serif';
+    ctx.fillText(`🎓 Lessons Mastered: ${completedLessons} / 12`, 100, 320);
+    ctx.fillText(`🏆 Badges Unlocked: ${unlockedBadges} / 4`, 100, 370);
+    ctx.fillText(`⚡ Building Wealth with 0% Advisor Fees`, 100, 420);
+
+    // Footer Branding
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = 'bold 24px sans-serif';
+    ctx.fillText('https://haftora.netlify.app — 100% Free ETF & Investing Learning Platform', 100, 520);
+
+    setSocialCardUrl(canvas.toDataURL('image/png'));
+  };
   const badges = [
     { id: 'badge-first-step', name: 'First Step Investor', desc: 'Completed your first lesson',          icon: <BookOpen size={20}/>,       unlocked: progress.completedLessonIds.length >= 1 },
     { id: 'badge-quiz-whiz',  name: 'Quiz Master',         desc: 'Passed 3+ knowledge check quizzes',   icon: <Award size={20}/>,           unlocked: Object.keys(progress.quizScores).length >= 3 },
@@ -31,9 +79,19 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ progress, onResetProgr
             <p style={{ fontSize: '0.8rem', color: '#64748B' }}>Tracking your investing education journey</p>
           </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#FFFBEB', border: '1.5px solid #FCD34D', borderRadius: 999, padding: '0.4rem 1rem', color: '#92400E', fontWeight: 700, fontSize: '0.85rem' }}>
-          <Flame size={16} color="#F59E0B" fill="#F59E0B" />
-          {progress.streakDays} Day Streak
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#FFFBEB', border: '1.5px solid #FCD34D', borderRadius: 999, padding: '0.4rem 1rem', color: '#92400E', fontWeight: 700, fontSize: '0.85rem' }}>
+            <Flame size={16} color="#F59E0B" fill="#F59E0B" />
+            {progress.streakDays} Day Streak
+          </div>
+          <button
+            id="btn-export-social-card"
+            className="btn btn-secondary btn-sm"
+            onClick={() => generateSocialCard(progress.streakDays, badges.filter(b => b.unlocked).length, progress.completedLessonIds.length)}
+            style={{ borderRadius: 999, fontSize: '0.78rem' }}
+          >
+            📸 Share Achievement Card
+          </button>
         </div>
       </div>
 
@@ -97,6 +155,26 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ progress, onResetProgr
           <Trash2 size={14}/> Reset All Progress
         </button>
       </div>
+
+      {/* Social Card Preview Modal */}
+      {socialCardUrl && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'rgba(12, 26, 39, 0.8)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+          <div className="card" style={{ maxWidth: 650, width: '100%', background: 'white', padding: '1.5rem', textAlign: 'center' }}>
+            <h3 style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 900, fontSize: '1.2rem', color: '#0C1A27', marginBottom: 12 }}>
+              📸 Your Social Achievement Card
+            </h3>
+            <img src={socialCardUrl} alt="Social Achievement Card" style={{ width: '100%', borderRadius: 16, border: '1px solid #BAE6FD', marginBottom: 16 }} />
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
+              <a href={socialCardUrl} download={`haftora-achievement-${Date.now()}.png`} className="btn btn-primary btn-sm" style={{ textDecoration: 'none' }}>
+                Download Image (PNG)
+              </a>
+              <button onClick={() => setSocialCardUrl(null)} className="btn btn-secondary btn-sm">
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

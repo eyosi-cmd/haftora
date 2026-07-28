@@ -4,7 +4,7 @@ import { LEARNING_MODULES } from '../../data/learningContent';
 import confetti from 'canvas-confetti';
 import {
   BookOpen, CheckCircle2, Clock, AlertCircle, ShieldCheck,
-  HelpCircle, ChevronRight, Award, ArrowLeft, Zap, XCircle
+  HelpCircle, ChevronRight, Award, ArrowLeft, Zap, XCircle, Volume2, Square
 } from 'lucide-react';
 import { calculateCompoundInterest, formatCurrency } from '../../utils/financialMath';
 
@@ -21,9 +21,30 @@ export const LearningCenterView: React.FC<LearningCenterViewProps> = ({
   const [activeCategory, setActiveCategory] = useState('all');
   const [userAnswers, setUserAnswers] = useState<Record<string, number>>({});
   const [quizSubmitted, setQuizSubmitted] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const [sliderPrincipal, setSliderPrincipal] = useState(1000);
   const [sliderMonthly, setSliderMonthly] = useState(300);
   const [sliderYears, setSliderYears] = useState(25);
+
+  const toggleAudio = (text: string) => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+      alert('Audio narration is not supported on this browser.');
+      return;
+    }
+    if (isSpeaking) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+    } else {
+      window.speechSynthesis.cancel();
+      const cleanText = text.replace(/[*#_`]/g, '');
+      const utterance = new SpeechSynthesisUtterance(cleanText);
+      utterance.rate = 0.95;
+      utterance.onend = () => setIsSpeaking(false);
+      utterance.onerror = () => setIsSpeaking(false);
+      window.speechSynthesis.speak(utterance);
+      setIsSpeaking(true);
+    }
+  };
 
   const compoundResult = calculateCompoundInterest(sliderPrincipal, sliderMonthly, 8, sliderYears);
   const finalPoint = compoundResult[compoundResult.length - 1];
@@ -66,6 +87,25 @@ export const LearningCenterView: React.FC<LearningCenterViewProps> = ({
           <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginBottom: 12 }}>
             <span className="badge badge-blue">Interactive Lesson</span>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: '0.8rem', color: '#64748B' }}>
+              <button
+                id="btn-listen-lesson"
+                className="btn btn-ghost btn-sm"
+                onClick={() => toggleAudio(`${activeLesson.title}. ${activeLesson.summary}. ${activeLesson.contentMarkdown}`)}
+                style={{
+                  background: isSpeaking ? '#FEF2F2' : '#F0F9FF',
+                  color: isSpeaking ? '#EF4444' : '#0284C7',
+                  border: isSpeaking ? '1.5px solid #FCA5A5' : '1.5px solid #7DD3FC',
+                  borderRadius: 999,
+                  fontSize: '0.75rem',
+                  fontWeight: 700,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 5
+                }}
+              >
+                {isSpeaking ? <Square size={13} fill="#EF4444" /> : <Volume2 size={14} />}
+                {isSpeaking ? 'Stop Narration' : '🔊 Listen to Lesson'}
+              </button>
               <Clock size={13} /> {activeLesson.readTimeMin} min read
               {isDone && <span style={{ color: '#10B981', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 4 }}><CheckCircle2 size={14} /> Completed</span>}
             </div>

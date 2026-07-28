@@ -149,6 +149,134 @@ export const PortfolioBuilderView: React.FC<PortfolioBuilderViewProps> = ({ onSa
           </div>
         </div>
       </div>
+      {/* ── BOGLEHEADS 3-FUND PORTFOLIO STUDIO ────────────────────────────── */}
+      <Bogleheads3FundStudio />
+    </div>
+  );
+};
+
+// ── BOGLEHEADS 3-FUND STUDIO COMPONENT ──────────────────────────────────────
+const Bogleheads3FundStudio: React.FC = () => {
+  const [vtiPct, setVtiPct] = useState(60);
+  const [vxusPct, setVxusPct] = useState(20);
+  const [bndPct, setBndPct] = useState(20);
+  const [initialAmount, setInitialAmount] = useState(10000);
+  const [monthlyDeposit, setMonthlyDeposit] = useState(500);
+
+  const totalPct = vtiPct + vxusPct + bndPct;
+
+  // Blended calculations
+  const blendedExpenseRatio = Number(((vtiPct * 0.03 + vxusPct * 0.08 + bndPct * 0.03) / 100).toFixed(3));
+  const blendedYield = Number(((vtiPct * 1.35 + vxusPct * 3.10 + bndPct * 3.85) / 100).toFixed(2));
+  const blendedReturn = Number(((vtiPct * 10.0 + vxusPct * 7.5 + bndPct * 4.2) / 100).toFixed(2));
+
+  // 30 year projection
+  const r = blendedReturn / 100;
+  const n = 30;
+  const futureValue = Math.round(
+    initialAmount * Math.pow(1 + r, n) +
+    monthlyDeposit * 12 * ((Math.pow(1 + r, n) - 1) / r)
+  );
+
+  const annualDividendIncome = Math.round(futureValue * (blendedYield / 100));
+
+  const applyPreset = (vti: number, vxus: number, bnd: number) => {
+    setVtiPct(vti);
+    setVxusPct(vxus);
+    setBndPct(bnd);
+  };
+
+  return (
+    <div id="bogleheads-studio" className="card" style={{ border: '2px solid #7DD3FC', background: '#F0F9FF', padding: '1.5rem' }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: 16 }}>
+        <div>
+          <span className="badge badge-indigo" style={{ marginBottom: 4 }}>Bogleheads Strategy Lab</span>
+          <h2 style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 900, color: '#0C1A27', fontSize: '1.25rem' }}>
+            Interactive 3-Fund Portfolio Studio
+          </h2>
+          <p style={{ fontSize: '0.85rem', color: '#64748B', marginTop: 2 }}>
+            Build the world-famous 3-Fund Index Portfolio (VTI + VXUS + BND) for maximum diversification & minimal fees.
+          </p>
+        </div>
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+          <button onClick={() => applyPreset(60, 20, 20)} className="btn btn-ghost btn-sm" style={{ borderRadius: 999, background: 'white', border: '1px solid #BAE6FD', fontSize: '0.72rem' }}>
+            Classic 60/20/20
+          </button>
+          <button onClick={() => applyPreset(70, 30, 0)} className="btn btn-ghost btn-sm" style={{ borderRadius: 999, background: 'white', border: '1px solid #BAE6FD', fontSize: '0.72rem' }}>
+            100% Equity Growth
+          </button>
+          <button onClick={() => applyPreset(40, 20, 40)} className="btn btn-ghost btn-sm" style={{ borderRadius: 999, background: 'white', border: '1px solid #BAE6FD', fontSize: '0.72rem' }}>
+            Balanced 40/20/40
+          </button>
+        </div>
+      </div>
+
+      {/* Allocation Sliders */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem', marginBottom: '1.25rem' }}>
+        <div style={{ background: 'white', padding: '1rem', borderRadius: 16, border: '1px solid #BAE6FD' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+            <span style={{ fontWeight: 800, color: '#0284C7', fontSize: '0.9rem' }}>VTI — US Total Stock</span>
+            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 800, color: '#0C1A27' }}>{vtiPct}%</span>
+          </div>
+          <input type="range" min={0} max={100} step={5} value={vtiPct} onChange={e => setVtiPct(+e.target.value)} />
+          <span style={{ fontSize: '0.7rem', color: '#94A3B8', marginTop: 4, display: 'block' }}>Vanguard Total Stock Market (0.03% ER)</span>
+        </div>
+
+        <div style={{ background: 'white', padding: '1rem', borderRadius: 16, border: '1px solid #BAE6FD' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+            <span style={{ fontWeight: 800, color: '#6366F1', fontSize: '0.9rem' }}>VXUS — Intl Stock</span>
+            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 800, color: '#0C1A27' }}>{vxusPct}%</span>
+          </div>
+          <input type="range" min={0} max={100} step={5} value={vxusPct} onChange={e => setVxusPct(+e.target.value)} />
+          <span style={{ fontSize: '0.7rem', color: '#94A3B8', marginTop: 4, display: 'block' }}>Total International Stock (0.08% ER)</span>
+        </div>
+
+        <div style={{ background: 'white', padding: '1rem', borderRadius: 16, border: '1px solid #BAE6FD' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+            <span style={{ fontWeight: 800, color: '#F59E0B', fontSize: '0.9rem' }}>BND — Total Bond</span>
+            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 800, color: '#0C1A27' }}>{bndPct}%</span>
+          </div>
+          <input type="range" min={0} max={100} step={5} value={bndPct} onChange={e => setBndPct(+e.target.value)} />
+          <span style={{ fontSize: '0.7rem', color: '#94A3B8', marginTop: 4, display: 'block' }}>Total Bond Market (0.03% ER)</span>
+        </div>
+      </div>
+
+      {totalPct !== 100 && (
+        <div style={{ background: '#FFFBEB', border: '1px solid #FCD34D', color: '#B45309', padding: '0.5rem 0.85rem', borderRadius: 12, fontSize: '0.78rem', fontWeight: 700, marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: 6 }}>
+          <AlertTriangle size={14} /> Total allocation is {totalPct}% (adjust sliders to equal 100%).
+        </div>
+      )}
+
+      {/* Live Calculated Output Grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '0.75rem' }}>
+        <div style={{ background: 'white', padding: '0.9rem', borderRadius: 14, border: '1px solid #BAE6FD', textAlign: 'center' }}>
+          <div style={{ fontSize: '0.7rem', color: '#64748B', fontWeight: 700 }}>Blended Expense Ratio</div>
+          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 800, fontSize: '1.1rem', color: '#10B981', marginTop: 2 }}>
+            {blendedExpenseRatio}% / yr
+          </div>
+        </div>
+
+        <div style={{ background: 'white', padding: '0.9rem', borderRadius: 14, border: '1px solid #BAE6FD', textAlign: 'center' }}>
+          <div style={{ fontSize: '0.7rem', color: '#64748B', fontWeight: 700 }}>Blended Div Yield</div>
+          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 800, fontSize: '1.1rem', color: '#0284C7', marginTop: 2 }}>
+            {blendedYield}%
+          </div>
+        </div>
+
+        <div style={{ background: 'white', padding: '0.9rem', borderRadius: 14, border: '1px solid #BAE6FD', textAlign: 'center' }}>
+          <div style={{ fontSize: '0.7rem', color: '#64748B', fontWeight: 700 }}>30-Yr Projected Value</div>
+          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 800, fontSize: '1.1rem', color: '#0EA5E9', marginTop: 2 }}>
+            ${futureValue.toLocaleString()}
+          </div>
+        </div>
+
+        <div style={{ background: 'white', padding: '0.9rem', borderRadius: 14, border: '1px solid #BAE6FD', textAlign: 'center' }}>
+          <div style={{ fontSize: '0.7rem', color: '#64748B', fontWeight: 700 }}>Est. Annual Dividends</div>
+          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 800, fontSize: '1.1rem', color: '#059669', marginTop: 2 }}>
+            ${annualDividendIncome.toLocaleString()} / yr
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

@@ -11,8 +11,31 @@ interface CalculatorsViewProps {
 }
 
 export const CalculatorsView: React.FC<CalculatorsViewProps> = ({ onSaveScenario }) => {
-  const [tab, setTab] = useState<'compound'|'dca'|'drip'|'inflation'>('compound');
+  const [tab, setTab] = useState<'compound' | 'feedrag' | 'dca' | 'drip' | 'inflation'>('compound');
   const [saved, setSaved] = useState(false);
+
+  // Fee Drag Calculator
+  const [feeInit, setFeeInit] = useState(10000);
+  const [feeMo, setFeeMo] = useState(500);
+  const [feeYrs, setFeeYrs] = useState(30);
+  const [feeReturn, setFeeReturn] = useState(8.0);
+  const [feeAdvisor, setFeeAdvisor] = useState(1.25);
+
+  const rLow = (feeReturn - 0.03) / 100;
+  const rHigh = (feeReturn - feeAdvisor) / 100;
+  const nFee = feeYrs;
+
+  const lowCostFuture = Math.round(
+    feeInit * Math.pow(1 + rLow, nFee) +
+    feeMo * 12 * ((Math.pow(1 + rLow, nFee) - 1) / rLow)
+  );
+
+  const highCostFuture = Math.round(
+    feeInit * Math.pow(1 + rHigh, nFee) +
+    feeMo * 12 * ((Math.pow(1 + rHigh, nFee) - 1) / rHigh)
+  );
+
+  const feeStolenAmount = Math.max(0, lowCostFuture - highCostFuture);
 
   const handleSaveCalculation = () => {
     if (!onSaveScenario) return;
@@ -73,6 +96,7 @@ export const CalculatorsView: React.FC<CalculatorsViewProps> = ({ onSaveScenario
 
   const tabs = [
     { id: 'compound', label: 'Compound Interest' },
+    { id: 'feedrag',  label: 'Wealth Thief (Fee Drag)' },
     { id: 'dca',      label: 'DCA vs Lump Sum' },
     { id: 'drip',     label: 'Dividend DRIP' },
     { id: 'inflation',label: 'Inflation Impact' },
@@ -142,7 +166,34 @@ export const CalculatorsView: React.FC<CalculatorsViewProps> = ({ onSaveScenario
         </div>
       )}
 
-      {/* ── DCA ── */}
+      {/* ── WEALTH THIEF (FEE DRAG) ── */}
+      {tab === 'feedrag' && (
+        <div id="calc-feedrag" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px,1fr))', gap: '1.25rem' }}>
+          <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', borderLeft: '4px solid #EF4444' }}>
+            <h2 style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 800, color: '#0C1A27' }}>Fee Parameters</h2>
+            <SliderRow id="fee-initial" label="Initial Investment" val={feeInit} set={setFeeInit} min={1000} max={100000} step={1000} prefix="$" />
+            <SliderRow id="fee-monthly" label="Monthly Deposit" val={feeMo} set={setFeeMo} min={50} max={2500} step={50} prefix="$" />
+            <SliderRow id="fee-years" label="Investment Horizon" val={feeYrs} set={setFeeYrs} min={5} max={40} step={1} suffix=" yrs" />
+            <SliderRow id="fee-return" label="Market Annual Return" val={feeReturn} set={setFeeReturn} min={4} max={12} step={0.5} suffix="%" />
+            <SliderRow id="fee-advisor" label="Financial Advisor Fee" val={feeAdvisor} set={setFeeAdvisor} min={0.25} max={2.5} step={0.05} suffix="%" />
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            <ResultCard id="fee-lowcost-result" label="Index ETF Portfolio (0.03% Fee)" val={formatCurrency(lowCostFuture)} color="#10B981" />
+            <ResultCard id="fee-advisor-result" label={`With ${feeAdvisor}% Advisor Fee`} val={formatCurrency(highCostFuture)} color="#64748B" />
+            <ResultCard id="fee-stolen-result" label="🔥 Total Wealth Lost to Fees" val={formatCurrency(feeStolenAmount)} color="#EF4444" />
+
+            <div className="card" style={{ background: '#FEF2F2', border: '1.5px solid #FCA5A5' }}>
+              <p style={{ fontSize: '0.85rem', color: '#991B1B', fontWeight: 700, marginBottom: 4 }}>
+                ⚠️ The "Wealth Thief" Effect:
+              </p>
+              <p style={{ fontSize: '0.8rem', color: '#B91C1C' }}>
+                A {feeAdvisor}% advisor fee steals <strong>{formatCurrency(feeStolenAmount)}</strong> out of your potential 30-year wealth! By investing in low-cost index ETFs (0.03% VOO), you keep 100% of your earnings.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
       {tab === 'dca' && (
         <div id="calc-dca" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px,1fr))', gap: '1.25rem' }}>
           <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
