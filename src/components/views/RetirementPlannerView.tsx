@@ -70,7 +70,8 @@ export const RetirementPlannerView: React.FC<RetirementPlannerViewProps> = ({ on
         <span><strong>Educational Projection Only.</strong> Actual investment results will differ. This tool is for learning purposes only.</span>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,2fr)', gap: '1.25rem' }}>
+      {/* Main planner grid: stacked on mobile, side-by-side on desktop */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.25rem' }}>
 
         {/* Sliders panel */}
         <div id="planner-controls" className="card" style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
@@ -92,18 +93,18 @@ export const RetirementPlannerView: React.FC<RetirementPlannerViewProps> = ({ on
         </div>
 
         {/* Right column */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', minWidth: 0 }}>
 
-          {/* KPI cards */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem' }}>
+          {/* KPI cards - stacked on mobile */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.75rem' }}>
             {[
               { id: 'kpi-nominal',      label: `Portfolio at Age ${retirementAge}`, val: formatCurrency(final.nominalBalance),      color: '#0EA5E9', border: '#0EA5E9' },
               { id: 'kpi-contributed',  label: 'Total Contributed',                 val: formatCurrency(final.totalContributions),  color: '#334155', border: '#BAE6FD' },
               { id: 'kpi-real',         label: 'Inflation-Adjusted Power',          val: formatCurrency(final.realBalance),         color: '#F59E0B', border: '#FCD34D' },
             ].map(k => (
-              <div key={k.id} id={k.id} className="card" style={{ borderTop: `3px solid ${k.border}`, padding: '1rem' }}>
+              <div key={k.id} id={k.id} className="card" style={{ borderTop: `3px solid ${k.border}`, padding: '0.9rem' }}>
                 <div style={{ fontSize: '0.7rem', color: '#94A3B8', fontWeight: 600, marginBottom: 4 }}>{k.label}</div>
-                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 800, fontSize: '1.1rem', color: k.color }}>{k.val}</div>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 800, fontSize: 'clamp(0.95rem, 2.5vw, 1.15rem)', color: k.color, wordBreak: 'break-word' }}>{k.val}</div>
               </div>
             ))}
           </div>

@@ -7,7 +7,7 @@ import { searchTickers, getTickerStats, triggerSync, TickerResult, TickerStats }
 import {
   Search, PieChart, DollarSign, TrendingUp, ArrowUpRight, ArrowDownRight,
   Layers, BarChart3, Check, RefreshCw, Radio, X, ChevronRight, Zap,
-  Database, Activity, RotateCcw
+  Database, Activity, RotateCcw, Clock
 } from 'lucide-react';
 import { PieChart as RechartsPie, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 
@@ -68,6 +68,9 @@ export const ETFExplorerView: React.FC = () => {
   const [isComparing, setIsComparing]   = useState(false);
   const [liveQuotes, setLiveQuotes]     = useState<Record<string, LiveMarketQuote>>({});
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [lastUpdatedTime, setLastUpdatedTime] = useState<string>(() => {
+    return `Today at ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+  });
 
   // ── Universal Live Search (backend API) ───────────────────────────────────
   const [liveQuery, setLiveQuery]           = useState('');
@@ -150,6 +153,8 @@ export const ETFExplorerView: React.FC = () => {
       }
       setLiveQuotes(updated);
     }
+    const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    setLastUpdatedTime(`Today at ${timeStr}`);
     setIsRefreshing(false);
   };
 
@@ -202,9 +207,26 @@ export const ETFExplorerView: React.FC = () => {
               Real-Time Market Data
             </span>
           </div>
-          <p style={{ color: '#64748B', marginTop: 4, fontSize: '0.88rem' }}>
-            Search, compare and analyze top ETFs — expense ratios, sector weights, live prices.
-          </p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 4, flexWrap: 'wrap' }}>
+            <p style={{ color: '#64748B', fontSize: '0.88rem' }}>
+              Search, compare and analyze top ETFs — expense ratios, sector weights, live prices.
+            </p>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '0.72rem', color: '#94A3B8', fontWeight: 500, background: '#F8FBFF', border: '1px solid #BAE6FD', borderRadius: 999, padding: '0.25rem 0.75rem' }}>
+              <Clock size={12} color="#64748B" />
+              <span>Data updated: {lastUpdatedTime}</span>
+              <button
+                id="btn-sync-etf-quotes"
+                className="btn btn-ghost btn-sm"
+                onClick={refreshMarketData}
+                disabled={isRefreshing}
+                style={{ padding: '0.15rem 0.5rem', fontSize: '0.72rem', borderRadius: 999, color: '#0EA5E9', gap: 4, height: 'auto', minHeight: 0 }}
+                title="Manually sync live ETF quotes"
+              >
+                <RotateCcw size={12} style={{ animation: isRefreshing ? 'spin 1s linear infinite' : 'none' }} />
+                {isRefreshing ? 'Syncing...' : 'Sync'}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 

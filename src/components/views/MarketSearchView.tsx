@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { searchTickers, getTickerStats, TickerResult, TickerStats } from '../../services/tickerApi';
 import { fetchLiveQuote, LiveMarketQuote } from '../../services/marketApi';
-import { Search, Database, RefreshCw, X, ArrowUpRight, ArrowDownRight, Layers, DollarSign, Building2, TrendingUp, Check, ExternalLink } from 'lucide-react';
+import { Search, Database, RefreshCw, X, ArrowUpRight, ArrowDownRight, Layers, DollarSign, Building2, TrendingUp, Check, ExternalLink, RotateCcw, Clock } from 'lucide-react';
 import { formatPercent } from '../../utils/financialMath';
 
 export const MarketSearchView: React.FC = () => {
@@ -17,8 +17,23 @@ export const MarketSearchView: React.FC = () => {
   const [fetchingQuotes, setFetchingQuotes] = useState(false);
   const [selectedResult, setSelectedResult] = useState<TickerResult | null>(null);
   const [selectedQuote, setSelectedQuote]   = useState<LiveMarketQuote | null>(null);
+  const [lastUpdatedTime, setLastUpdatedTime] = useState<string>(() => {
+    return `Today at ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+  });
 
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleSyncAll = async () => {
+    setFetchingQuotes(true);
+    const updatedQuotes: Record<string, LiveMarketQuote> = { ...quotes };
+    for (const item of results) {
+      updatedQuotes[item.symbol] = await fetchLiveQuote(item.symbol);
+    }
+    setQuotes(updatedQuotes);
+    const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    setLastUpdatedTime(`Today at ${timeStr}`);
+    setFetchingQuotes(false);
+  };
 
   // Fetch initial stats & default top market tickers on mount
   useEffect(() => {
@@ -176,11 +191,24 @@ export const MarketSearchView: React.FC = () => {
             <span>Found <strong style={{ color: '#0C1A27' }}>{total.toLocaleString()}</strong> instruments {query ? `for "${query}"` : ''}</span>
           )}
         </div>
-        {fetchingQuotes && (
-          <span style={{ fontSize: '0.75rem', color: '#0EA5E9', display: 'inline-flex', alignItems: 'center', gap: 5, fontWeight: 600 }}>
-            <RefreshCw size={12} className="animate-spin" /> Fetching live market quotes…
-          </span>
-        )}
+
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '0.72rem', color: '#94A3B8', fontWeight: 500, background: '#F8FBFF', border: '1px solid #BAE6FD', borderRadius: 999, padding: '0.25rem 0.75rem' }}>
+            <Clock size={12} color="#64748B" />
+            <span>Data updated: {lastUpdatedTime}</span>
+            <button
+              id="btn-sync-market-search"
+              className="btn btn-ghost btn-sm"
+              onClick={handleSyncAll}
+              disabled={fetchingQuotes}
+              style={{ padding: '0.15rem 0.5rem', fontSize: '0.72rem', borderRadius: 999, color: '#0EA5E9', gap: 4, height: 'auto', minHeight: 0 }}
+              title="Manually sync live market quotes"
+            >
+              <RotateCcw size={12} style={{ animation: fetchingQuotes ? 'spin 1s linear infinite' : 'none' }} />
+              {fetchingQuotes ? 'Syncing...' : 'Sync'}
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* ── Dynamic Card Grid ──────────────────────────────────────── */}
