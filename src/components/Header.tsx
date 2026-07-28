@@ -36,7 +36,7 @@ const navItems: { id: NavTab; label: string; icon: React.ReactNode }[] = [
   { id: 'profile',            label: 'Profile',     icon: <User className="w-5 h-5" /> },
 ];
 
-export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, streakDays }) => {
+export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, streakDays, onUserChange }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [showPwaBanner, setShowPwaBanner] = useState(() => {
     return localStorage.getItem('haftora_pwa_banner_dismissed') !== 'true';
