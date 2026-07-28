@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { SavedScenario } from '../../types';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { AlertTriangle, TrendingDown, Clock, DollarSign, CheckCircle2, XCircle, Home, Target, TrendingUp, GraduationCap, Save, Check } from 'lucide-react';

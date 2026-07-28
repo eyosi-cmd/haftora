@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { SavedScenario } from '../../types';
 import {
   calculateCompoundInterest, calculateDCA,

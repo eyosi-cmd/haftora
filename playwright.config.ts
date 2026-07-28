@@ -6,7 +6,7 @@ export default defineConfig({
   retries: 1,
   reporter: [['list'], ['html', { open: 'never' }]],
   use: {
-    baseURL: 'http://localhost:3000',
+    baseURL: 'http://127.0.0.1:3000',
     headless: true,
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
@@ -16,8 +16,8 @@ export default defineConfig({
     { name: 'mobile',   use: { ...devices['iPhone 13'] } },
   ],
   webServer: {
-    command: 'npx vite preview --port 3000',
+    command: 'npx vite preview --port 3000 --host 127.0.0.1',
     port: 3000,
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: true,
   },
 });
