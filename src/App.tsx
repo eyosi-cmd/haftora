@@ -18,6 +18,7 @@ const STORAGE_KEY = 'haftora_user_progress_v1';
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<NavTab>('dashboard');
   const [selectedLessonId, setSelectedLessonId] = useState<string | null>(null);
+  const [currentUser, setCurrentUser] = useState<any | null>(null);
 
   const getTodayString = () => new Date().toISOString().split('T')[0];
   const getYesterdayString = () => {
@@ -26,42 +27,39 @@ export const App: React.FC = () => {
     return d.toISOString().split('T')[0];
   };
 
-  // Initialize User Progress State with real calendar date streak tracking
-  const [progress, setProgress] = useState<UserProgressState>(() => {
-    const today = getTodayString();
-    const yesterday = getYesterdayString();
-    const saved = localStorage.getItem(STORAGE_KEY);
-
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved) as UserProgressState;
-        const lastActive = parsed.lastActiveDate;
-
-        let streak = parsed.streakDays || 1;
-        if (!lastActive) {
-          streak = 1;
-        } else if (lastActive !== today && lastActive !== yesterday) {
-          // Missed a day — reset streak to 1
-          streak = 1;
-        }
-
-        return {
-          ...parsed,
-          streakDays: streak,
-          lastActiveDate: lastActive || today,
-        };
-      } catch (e) {
-        console.error('Failed to parse user progress', e);
-      }
-    }
-    return {
-      completedLessonIds: [],
-      quizScores: {},
-      streakDays: 1,
-      lastActiveDate: today,
-      savedScenarios: []
-    };
+  const getInitialProgress = (): UserProgressState => ({
+    completedLessonIds: [],
+    quizScores: {},
+    streakDays: 1,
+    lastActiveDate: getTodayString(),
+    savedScenarios: []
   });
+
+  // Initialize User Progress State
+  const [progress, setProgress] = useState<UserProgressState>(getInitialProgress);
+
+  // Sync state when login user changes
+  const handleUserChange = (user: any | null) => {
+    setCurrentUser(user);
+    if (user) {
+      // Restore user progress from user metadata or logged-in localStorage
+      const userMetadataProgress = user.user_metadata?.haftora_progress;
+      const savedLocal = localStorage.getItem(STORAGE_KEY);
+      if (userMetadataProgress) {
+        setProgress(userMetadataProgress);
+      } else if (savedLocal) {
+        try {
+          setProgress(JSON.parse(savedLocal));
+        } catch {
+          setProgress(getInitialProgress());
+        }
+      }
+    } else {
+      // Guest user logged out or initial load as guest — reset to fresh in-memory state
+      localStorage.removeItem(STORAGE_KEY);
+      setProgress(getInitialProgress());
+    }
+  };
 
   // Helper to record activity and increment streak on calendar days
   const recordActivity = () => {
@@ -80,10 +78,16 @@ export const App: React.FC = () => {
     });
   };
 
-  // Persist state changes
+  // Persist progress ONLY if user is logged in. Guests' progress disappears on page refresh.
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
-  }, [progress]);
+    if (currentUser) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+      // Optionally sync to Netlify Identity user metadata if method exists
+      if (typeof currentUser.update === 'function') {
+        currentUser.update({ data: { haftora_progress: progress } }).catch(() => {});
+      }
+    }
+  }, [progress, currentUser]);
 
   // Handler for lesson completion
   const handleCompleteLesson = (lessonId: string, quizScore: number) => {
@@ -154,7 +158,8 @@ export const App: React.FC = () => {
       <Header 
         activeTab={activeTab} 
         setActiveTab={setActiveTab} 
-        streakDays={progress.streakDays} 
+        streakDays={progress.streakDays}
+        onUserChange={handleUserChange}
       />
 
       {/* Main Content Area */}

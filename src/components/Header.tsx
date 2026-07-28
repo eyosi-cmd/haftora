@@ -21,6 +21,7 @@ interface HeaderProps {
   activeTab: NavTab;
   setActiveTab: (tab: NavTab) => void;
   streakDays: number;
+  onUserChange?: (user: any | null) => void;
 }
 
 const navItems: { id: NavTab; label: string; icon: React.ReactNode }[] = [
@@ -167,7 +168,7 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, streakD
             </div>
 
             {/* Optional Netlify Auth Button */}
-            <AuthModal />
+            <AuthModal onUserChange={onUserChange} />
 
             {/* Mobile hamburger */}
             <button
