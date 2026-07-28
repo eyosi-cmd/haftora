@@ -28,9 +28,12 @@ const EXCHANGE_NAMES: Record<string, string> = {
 
 function fetchText(url: string): Promise<string> {
   return new Promise((resolve, reject) => {
-    const client = url.startsWith('https') ? https : http;
+    const isHttps = url.startsWith('https');
+    const client = isHttps ? https : http;
+    const agent = isHttps ? new https.Agent({ rejectUnauthorized: false }) : undefined;
+
     client
-      .get(url, { headers: { 'User-Agent': 'HaftoraBuild/1.0' } }, (res) => {
+      .get(url, { headers: { 'User-Agent': 'HaftoraBuild/1.0' }, agent }, (res) => {
         if (res.statusCode !== 200) {
           reject(new Error(`HTTP ${res.statusCode} for ${url}`));
           return;

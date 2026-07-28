@@ -19,9 +19,9 @@ export async function getClientDb(): Promise<Database | null> {
 
   _loadingPromise = (async () => {
     try {
-      // Load sql.js Wasm static engine
+      // Load sql.js Wasm static engine locally (0 external CDN dependency, 0 CORS issues)
       const SQL: SqlJsStatic = await initSqlJs({
-        locateFile: (file) => `https://sql.js.org/dist/${file}`,
+        locateFile: (file) => `/${file}`,
       });
 
       // Fetch pre-compiled /tickers.db from public asset directory
