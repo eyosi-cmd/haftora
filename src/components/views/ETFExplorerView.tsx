@@ -192,97 +192,13 @@ export const ETFExplorerView: React.FC = () => {
               ETF Explorer
             </h1>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: '#ECFDF5', border: '1.5px solid #6EE7B7', borderRadius: 999, padding: '0.28rem 0.75rem', fontSize: '0.72rem', fontWeight: 700, color: '#065F46' }}>
-              <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#10B981', animation: 'pulseGlow 2s infinite', display: 'inline-block' }} />
+              <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#10B981', display: 'inline-block' }} />
               Real-Time Market Data
             </span>
           </div>
           <p style={{ color: '#64748B', marginTop: 4, fontSize: '0.88rem' }}>
             Search, compare and analyze top ETFs — expense ratios, sector weights, live prices.
           </p>
-        </div>
-      </div>
-
-      {/* ── Universal Live Search Panel (Backend API) ────────────── */}
-      <div id="universal-search-panel" className="card" style={{ border: '2px solid #BAE6FD', padding: '1.25rem' }}>
-        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: 12 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-            <Database size={18} color="#0EA5E9" />
-            <span style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 800, color: '#0C1A27', fontSize: '0.95rem' }}>Universal Market Search</span>
-            {tickerStats ? (
-              <span style={{ background: '#ECFDF5', border: '1.5px solid #6EE7B7', borderRadius: 999, padding: '0.2rem 0.6rem', fontSize: '0.68rem', fontWeight: 700, color: '#065F46', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-                <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#10B981', display: 'inline-block' }} />
-                {tickerStats.total.toLocaleString()} tickers · {tickerStats.etfs.toLocaleString()} ETFs
-              </span>
-            ) : (
-              <span style={{ background: '#ECFDF5', border: '1.5px solid #6EE7B7', borderRadius: 999, padding: '0.2rem 0.6rem', fontSize: '0.68rem', fontWeight: 700, color: '#065F46', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-                <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#10B981', display: 'inline-block' }} />
-                13,000+ Market Tickers Ready
-              </span>
-            )}
-          </div>
-          <button id="btn-manual-sync" className="btn btn-ghost btn-sm" onClick={handleManualSync} disabled={syncing} style={{ borderRadius: 999, fontSize: '0.75rem' }}>
-            <RotateCcw size={13} style={{ animation: syncing ? 'spin 1s linear infinite' : 'none' }} />
-            {syncing ? 'Syncing…' : 'Sync Now'}
-          </button>
-        </div>
-
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          <div ref={dropdownRef} style={{ flex: 1, minWidth: 220, position: 'relative' }}>
-            <Search size={15} style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', color: '#94A3B8', pointerEvents: 'none', zIndex: 1 }} />
-            <input
-              id="universal-search-input"
-              type="text"
-              placeholder="Search any ticker or company (e.g. AAPL, Vanguard, Tesla)…"
-              value={liveQuery}
-              onChange={e => { setLiveQuery(e.target.value); setLivePage(1); }}
-              onFocus={() => liveResults.length > 0 && setShowDropdown(true)}
-              className="input-field"
-              style={{ paddingLeft: 38, paddingRight: liveQuery ? 36 : 14, borderRadius: 999 }}
-            />
-            {liveQuery && (
-              <button onClick={() => { setLiveQuery(''); setShowDropdown(false); }}
-                style={{ position: 'absolute', right: 11, top: '50%', transform: 'translateY(-50%)', background: '#CBD5E1', border: 'none', borderRadius: '50%', width: 18, height: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 1 }}>
-                <X size={10} color="white" />
-              </button>
-            )}
-            {showDropdown && (
-              <div id="search-dropdown" style={{ position: 'absolute', top: 'calc(100% + 6px)', left: 0, right: 0, zIndex: 100, background: 'white', border: '1.5px solid #BAE6FD', borderRadius: 16, boxShadow: '0 8px 32px rgba(14,165,233,0.15)', overflow: 'hidden' }}>
-                <div style={{ padding: '0.5rem 0.75rem', background: '#F0F9FF', borderBottom: '1px solid #BAE6FD', fontSize: '0.72rem', color: '#64748B', fontWeight: 600 }}>
-                  {liveLoading ? 'Searching…' : `${liveTotal.toLocaleString()} results for "${liveQuery}"`}
-                </div>
-                {liveResults.map(r => (
-                  <div key={r.symbol} id={`live-result-${r.symbol}`}
-                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.7rem 1rem', borderBottom: '1px solid #F0F9FF', cursor: 'pointer', transition: 'background 0.1s' }}
-                    onMouseEnter={e => (e.currentTarget.style.background = '#F0F9FF')}
-                    onMouseLeave={e => (e.currentTarget.style.background = 'white')}
-                  >
-                    <div>
-                      <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 800, fontSize: '0.9rem', color: '#0284C7', marginRight: 8 }}>{r.symbol}</span>
-                      <span style={{ fontSize: '0.8rem', color: '#475569' }}>{r.name.length > 45 ? r.name.slice(0, 45) + '…' : r.name}</span>
-                    </div>
-                    <div style={{ display: 'flex', gap: 5, flexShrink: 0 }}>
-                      {r.isETF && <span style={{ background: '#E0F2FE', color: '#0369A1', border: '1px solid #7DD3FC', borderRadius: 999, padding: '0.15rem 0.5rem', fontSize: '0.65rem', fontWeight: 700 }}>ETF</span>}
-                      <span style={{ background: '#F1F5F9', color: '#475569', border: '1px solid #CBD5E1', borderRadius: 999, padding: '0.15rem 0.5rem', fontSize: '0.65rem', fontWeight: 600 }}>{r.exchangeName || r.exchange}</span>
-                    </div>
-                  </div>
-                ))}
-                {liveTotal > 10 && (
-                  <div style={{ padding: '0.5rem 1rem', textAlign: 'center', background: '#F8FBFF', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-                    <button onClick={() => setLivePage(p => Math.max(1, p - 1))} disabled={livePage <= 1} className="btn btn-ghost btn-sm" style={{ borderRadius: 999, padding: '0.3rem 0.7rem' }}>←</button>
-                    <span style={{ fontSize: '0.72rem', color: '#64748B' }}>Page {livePage} · {liveTotal.toLocaleString()} total</span>
-                    <button onClick={() => setLivePage(p => p + 1)} disabled={livePage >= Math.ceil(liveTotal / 10)} className="btn btn-ghost btn-sm" style={{ borderRadius: 999, padding: '0.3rem 0.7rem' }}>→</button>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-          <div className="tab-group" style={{ padding: '0.2rem', borderRadius: 999 }}>
-            {(['All', 'ETF', 'Stock'] as const).map(t => (
-              <button key={t} id={`live-filter-${t.toLowerCase()}`} className={`tab-item${liveSearchType === t ? ' active' : ''}`}
-                onClick={() => { setLiveSearchType(t); setLivePage(1); }}
-                style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: 999 }}>{t}</button>
-            ))}
-          </div>
         </div>
       </div>
 
