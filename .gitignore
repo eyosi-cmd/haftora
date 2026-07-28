@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Database (generated at runtime)
+data/
+*.db
+*.db-shm
+*.db-wal
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Playwright test results
+test-results/
+playwright-report/
+
+# TypeScript cache
+*.tsbuildinfo
