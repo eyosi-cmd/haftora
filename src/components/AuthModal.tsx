@@ -12,27 +12,35 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onUserChange }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
 
   useEffect(() => {
-    // Initialize Netlify Identity widget
-    netlifyIdentity.init();
+    try {
+      // Point explicitly to the Netlify site identity endpoint
+      netlifyIdentity.init({
+        APIUrl: 'https://haftora.netlify.app/.netlify/identity',
+      });
 
-    const user = netlifyIdentity.currentUser();
-    setCurrentUser(user);
-    if (onUserChange) onUserChange(user);
+      const user = netlifyIdentity.currentUser();
+      setCurrentUser(user);
+      if (onUserChange) onUserChange(user);
 
-    netlifyIdentity.on('login', (u) => {
-      setCurrentUser(u);
-      if (onUserChange) onUserChange(u);
-      netlifyIdentity.close();
-    });
+      netlifyIdentity.on('login', (u) => {
+        setCurrentUser(u);
+        if (onUserChange) onUserChange(u);
+        netlifyIdentity.close();
+      });
 
-    netlifyIdentity.on('logout', () => {
-      setCurrentUser(null);
-      if (onUserChange) onUserChange(null);
-    });
+      netlifyIdentity.on('logout', () => {
+        setCurrentUser(null);
+        if (onUserChange) onUserChange(null);
+      });
+    } catch (err) {
+      console.warn('[AuthModal] Netlify Identity init notice:', err);
+    }
 
     return () => {
-      netlifyIdentity.off('login');
-      netlifyIdentity.off('logout');
+      try {
+        netlifyIdentity.off('login');
+        netlifyIdentity.off('logout');
+      } catch {}
     };
   }, []);
 
