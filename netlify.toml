@@ -2,7 +2,24 @@
   command = "npm run build"
   publish = "dist"
 
+[[headers]]
+  for = "/*.wasm"
+  [headers.values]
+    Content-Type = "application/wasm"
+    Access-Control-Allow-Origin = "*"
+
+[[redirects]]
+  from = "/*.wasm"
+  to = "/:splat.wasm"
+  status = 200
+
+[[redirects]]
+  from = "/*.db"
+  to = "/:splat.db"
+  status = 200
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+

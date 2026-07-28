@@ -1,6 +1,5 @@
-// src/services/sqliteSearch.ts
-// Client-side WebAssembly SQLite search service — zero server dependency, $0/month cost
 import initSqlJs, { Database, SqlJsStatic } from 'sql.js';
+import sqlWasmUrl from 'sql.js/dist/sql-wasm.wasm?url';
 
 export interface ClientTickerResult {
   symbol: string;
@@ -19,20 +18,49 @@ export async function getClientDb(): Promise<Database | null> {
 
   _loadingPromise = (async () => {
     try {
-      // Load sql.js Wasm static engine locally (0 external CDN dependency, 0 CORS issues)
-      const SQL: SqlJsStatic = await initSqlJs({
-        locateFile: (file) => `/${file}`,
-      });
+      // 1. Pre-fetch Wasm binary as ArrayBuffer (bypasses WebAssembly streaming MIME type errors)
+      let wasmBinary: Uint8Array | undefined = undefined;
+      const targetWasmUrl = sqlWasmUrl || '/sql-wasm.wasm';
 
-      // Fetch pre-compiled /tickers.db from public asset directory
-      const response = await fetch('/tickers.db');
-      if (!response.ok) {
+      try {
+        const wasmRes = await fetch(targetWasmUrl);
+        const contentType = wasmRes.headers.get('content-type') || '';
+        if (wasmRes.ok && !contentType.includes('text/html')) {
+          const buf = await wasmRes.arrayBuffer();
+          const bytes = new Uint8Array(buf);
+          // Verify WebAssembly magic bytes: 0x00 0x61 0x73 0x6d (\0asm)
+          if (bytes[0] === 0x00 && bytes[1] === 0x61 && bytes[2] === 0x73 && bytes[3] === 0x6d) {
+            wasmBinary = bytes;
+          }
+        }
+      } catch (e) {
+        console.warn('[sqliteClient] Wasm binary pre-fetch notice:', e);
+      }
+
+      // 2. Initialize sql.js engine
+      const SQL: SqlJsStatic = await initSqlJs(
+        wasmBinary
+          ? { wasmBinary }
+          : { locateFile: (file) => (file.endsWith('.wasm') ? targetWasmUrl : `/${file}`) }
+      );
+
+      // 3. Fetch pre-compiled /tickers.db static database
+      const dbRes = await fetch('/tickers.db');
+      const dbContentType = dbRes.headers.get('content-type') || '';
+      if (!dbRes.ok || dbContentType.includes('text/html')) {
         console.warn('[sqliteClient] /tickers.db static asset not found.');
         return null;
       }
 
-      const buffer = await response.arrayBuffer();
-      _db = new SQL.Database(new Uint8Array(buffer));
+      const dbBuf = await dbRes.arrayBuffer();
+      const dbBytes = new Uint8Array(dbBuf);
+      // Verify SQLite magic header: "SQLite format 3\0" (0x53 0x51 0x4c 0x69 0x74 0x65)
+      if (dbBytes[0] !== 0x53 || dbBytes[1] !== 0x51 || dbBytes[2] !== 0x4c) {
+        console.warn('[sqliteClient] /tickers.db is not a valid SQLite database.');
+        return null;
+      }
+
+      _db = new SQL.Database(dbBytes);
       console.log('[sqliteClient] ✅ Loaded Wasm SQLite database into browser memory');
       return _db;
     } catch (err) {
