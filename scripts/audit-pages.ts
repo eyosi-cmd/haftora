@@ -22,6 +22,7 @@ async function audit() {
     { id: 'dashboard',          heading: '#dashboard-hero' },
     { id: 'learn',              heading: '#learning-center-title' },
     { id: 'etf-explorer',       heading: '#etf-explorer-title' },
+    { id: 'market-search',      heading: '#market-search-title' },
     { id: 'retirement-planner', heading: '#planner-title' },
     { id: 'portfolio-builder',  heading: '#portfolio-title' },
     { id: 'calculators',        heading: '#calculators-title' },

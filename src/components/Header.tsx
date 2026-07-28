@@ -26,7 +26,8 @@ interface HeaderProps {
 const navItems: { id: NavTab; label: string; icon: React.ReactNode }[] = [
   { id: 'dashboard',          label: 'Home',        icon: <TrendingUp className="w-5 h-5" /> },
   { id: 'learn',              label: 'Learn',       icon: <BookOpen className="w-5 h-5" /> },
-  { id: 'etf-explorer',       label: 'ETFs',        icon: <Search className="w-5 h-5" /> },
+  { id: 'etf-explorer',       label: 'ETFs',        icon: <BarChart2 className="w-5 h-5" /> },
+  { id: 'market-search',      label: 'Search',      icon: <Search className="w-5 h-5" /> },
   { id: 'retirement-planner', label: 'Planner',     icon: <Target className="w-5 h-5" /> },
   { id: 'portfolio-builder',  label: 'Portfolio',   icon: <PieChart className="w-5 h-5" /> },
   { id: 'calculators',        label: 'Calculate',   icon: <Calculator className="w-5 h-5" /> },

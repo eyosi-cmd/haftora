@@ -6,6 +6,7 @@ import { Footer } from './components/Footer';
 import { DashboardView } from './components/views/DashboardView';
 import { LearningCenterView } from './components/views/LearningCenterView';
 import { ETFExplorerView } from './components/views/ETFExplorerView';
+import { MarketSearchView } from './components/views/MarketSearchView';
 import { RetirementPlannerView } from './components/views/RetirementPlannerView';
 import { PortfolioBuilderView } from './components/views/PortfolioBuilderView';
 import { CalculatorsView } from './components/views/CalculatorsView';
@@ -177,6 +178,10 @@ export const App: React.FC = () => {
 
         {activeTab === 'etf-explorer' && (
           <ETFExplorerView />
+        )}
+
+        {activeTab === 'market-search' && (
+          <MarketSearchView />
         )}
 
         {activeTab === 'retirement-planner' && (

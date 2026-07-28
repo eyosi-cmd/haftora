@@ -2,6 +2,7 @@ export type NavTab =
   | 'dashboard'
   | 'learn'
   | 'etf-explorer'
+  | 'market-search'
   | 'retirement-planner'
   | 'portfolio-builder'
   | 'calculators'
