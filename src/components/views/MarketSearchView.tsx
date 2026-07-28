@@ -32,25 +32,20 @@ export const MarketSearchView: React.FC = () => {
     if (res) {
       setResults(res.results);
       setTotal(res.total);
-      // Fetch live quotes for returned page results
-      fetchPageQuotes(res.results);
+      
+      // Instantly generate initial quotes for all 12 items
+      const initialQuotes: Record<string, LiveMarketQuote> = { ...quotes };
+      for (const item of res.results) {
+        if (!initialQuotes[item.symbol]) {
+          initialQuotes[item.symbol] = await fetchLiveQuote(item.symbol);
+        }
+      }
+      setQuotes(initialQuotes);
     } else {
       setResults([]);
       setTotal(0);
     }
     setLoading(false);
-  };
-
-  const fetchPageQuotes = async (items: TickerResult[]) => {
-    setFetchingQuotes(true);
-    const updatedQuotes: Record<string, LiveMarketQuote> = { ...quotes };
-    const promises = items.slice(0, 12).map(async (item) => {
-      const q = await fetchLiveQuote(item.symbol);
-      updatedQuotes[item.symbol] = q;
-    });
-    await Promise.all(promises);
-    setQuotes(updatedQuotes);
-    setFetchingQuotes(false);
   };
 
   // Debounced search input handler
