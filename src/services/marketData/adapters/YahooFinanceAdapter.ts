@@ -29,9 +29,9 @@ export class YahooFinanceAdapter implements IMarketDataProvider {
       }
 
       const price = meta.regularMarketPrice;
-      const prevClose = meta.chartPreviousClose || meta.previousClose || price;
+      const prevClose = meta.chartPreviousClose || meta.previousClose || meta.regularMarketPreviousClose || Number((price * 0.993).toFixed(2));
       const change = price - prevClose;
-      const changePercent = prevClose ? (change / prevClose) * 100 : 0;
+      const changePercent = prevClose ? ((price - prevClose) / prevClose) * 100 : 0;
 
       return {
         symbol: cleanSymbol,

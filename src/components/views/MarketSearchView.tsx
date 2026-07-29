@@ -288,9 +288,14 @@ export const MarketSearchView: React.FC = () => {
                           ${price.toFixed(2)}
                         </div>
                         {changePct !== undefined && (
-                          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.72rem', fontWeight: 700, color: isPos ? '#10B981' : '#EF4444', display: 'flex', alignItems: 'center', gap: 2, marginTop: 2 }}>
+                          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.72rem', fontWeight: 700, color: isPos ? '#10B981' : '#EF4444', display: 'flex', alignItems: 'center', gap: 3, marginTop: 2 }}>
                             {isPos ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
-                            {formatPercent(changePct)}
+                            <span>{formatPercent(changePct)}</span>
+                            {quote?.change !== undefined && (
+                              <span style={{ opacity: 0.85, fontSize: '0.68rem' }}>
+                                ({quote.change >= 0 ? `+$${quote.change.toFixed(2)}` : `-$${Math.abs(quote.change).toFixed(2)}`})
+                              </span>
+                            )}
                           </div>
                         )}
                       </div>

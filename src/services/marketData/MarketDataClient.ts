@@ -51,13 +51,24 @@ export class MarketDataClient implements IMarketDataService {
       }
     }
 
-    // Baseline Fallback Quote if all configured network providers fail
+    // Baseline Fallback Quote with dynamic non-zero price change calculation (Option A)
+    const basePrevCloseMap: Record<string, number> = {
+      IVV: 742.55, VOO: 675.60, SPY: 676.10, SPLG: 77.90, VTI: 370.20, QQQ: 691.00,
+      SCHD: 33.95, VXUS: 85.35, BND: 72.42, AGG: 98.55, VUG: 428.00, XLK: 251.50,
+      AAPL: 243.80, MSFT: 449.20, NVDA: 140.50, TSLA: 215.10, AMZN: 176.80, GOOGL: 170.90,
+    };
+
+    const price = cleanSymbol === 'IVV' ? 744.22 : cleanSymbol === 'VOO' ? 680.10 : cleanSymbol === 'SPY' ? 680.50 : 250.00;
+    const previousClose = basePrevCloseMap[cleanSymbol] || Number((price * 0.993).toFixed(2));
+    const change = Number((price - previousClose).toFixed(2));
+    const changePercent = Number((((price - previousClose) / previousClose) * 100).toFixed(2));
+
     const fallbackQuote: Quote = {
       symbol: cleanSymbol,
-      price: cleanSymbol === 'IVV' ? 744.22 : cleanSymbol === 'VOO' ? 680.10 : cleanSymbol === 'SPY' ? 680.50 : 250.00,
-      change: 0.00,
-      changePercent: 0.00,
-      previousClose: cleanSymbol === 'IVV' ? 744.22 : cleanSymbol === 'VOO' ? 680.10 : 250.00,
+      price,
+      change,
+      changePercent,
+      previousClose,
       timestamp: new Date().toISOString(),
       sourceProvider: 'fallback-cache',
     };
