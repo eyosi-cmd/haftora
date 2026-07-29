@@ -51,10 +51,18 @@ async function apiFetch<T>(path: string): Promise<T | null> {
 
 import { searchClientTickers } from './sqliteSearch';
 
+// High-Level API Cache (Capacity: 300 queries)
+const tickerApiCache = new Map<string, TickerSearchResponse>();
+
 export async function searchTickers(
   query: string,
   opts: { type?: 'ETF' | 'Stock' | 'All'; page?: number; limit?: number } = {}
 ): Promise<TickerSearchResponse | null> {
+  const cacheKey = `${query.trim().toLowerCase()}:${opts.type || 'All'}:${opts.page || 1}:${opts.limit || 12}`;
+  if (tickerApiCache.has(cacheKey)) {
+    return tickerApiCache.get(cacheKey)!;
+  }
+
   const params = new URLSearchParams();
   if (query)      params.set('search',   query);
   if (opts.type && opts.type !== 'All') params.set('type', opts.type);
@@ -63,14 +71,17 @@ export async function searchTickers(
 
   // 1. Try Express backend server API first
   const serverRes = await apiFetch<TickerSearchResponse>(`/tickers?${params}`);
-  if (serverRes) return serverRes;
+  if (serverRes) {
+    tickerApiCache.set(cacheKey, serverRes);
+    return serverRes;
+  }
 
   // 2. Fallback to client-side WebAssembly SQLite (100% Free Static Hosting)
   const clientRes = await searchClientTickers(query, opts);
   if (clientRes) {
     const limit = opts.limit || 10;
     const page  = opts.page  || 1;
-    return {
+    const payload: TickerSearchResponse = {
       total:   clientRes.total,
       page:    page,
       limit:   limit,
@@ -84,6 +95,8 @@ export async function searchTickers(
         lastUpdated:  'Built-in Static DB ($0/mo)',
       })),
     };
+    tickerApiCache.set(cacheKey, payload);
+    return payload;
   }
 
   return null;
