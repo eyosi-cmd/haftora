@@ -20,7 +20,7 @@ Monitor project execution for Straw Hat Bot RAG investing chatbot integration in
 - **Delivered results**: Initialized project sentinel, recorded original request.
 
 ## Project Status
-- **Phase**: in progress
+- **Phase**: in progress (Milestone 2: R1 & R2 implementation)
 
 ## Victory Audit Status
 - **Triggered**: no

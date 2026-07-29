@@ -1,15 +1,16 @@
 ## Current Status
-Last visited: 2026-07-28T23:36:00-04:00
+Last visited: 2026-07-28T23:40:05-04:00
 
 ## Iteration Status
-Current iteration: 1 / 32
+Current iteration: 2 / 32
 
 ## Checklist
-- [ ] Milestone 1: Exploration & Architecture Inspection
-- [ ] Milestone 2: R1 - Financial KB & RAG Engine (`src/services/rag/`)
-- [ ] Milestone 3: R2 - Luffy Persona & System Prompt (`src/services/rag/luffyPersona.ts`)
-- [ ] Milestone 4: R3 - React Floating Chatbot Widget (`src/components/ChatWidget.tsx`) & `App.tsx` Integration
-- [ ] Milestone 5: E2E Verification, Tests (`tests/fallback.test.ts`), Build (`npm run build`), & Forensic Audit
+- [x] Milestone 1: Exploration & Architecture Inspection
+- [ ] Milestone 2: R1 & R2 - Financial KB, TF-IDF RAG Engine (`src/services/rag/`), Live Quote Injection, & Luffy Persona (`src/services/rag/luffyPersona.ts`)
+- [ ] Milestone 3: R3 - React Floating Chatbot Widget (`src/components/ChatWidget.tsx`) & `App.tsx` Integration
+- [ ] Milestone 4: E2E Verification, Tests (`tests/fallback.test.ts`), Build (`npm run build`), & Forensic Audit
 
 ## Retrospective Notes
-- Project initialized. Starting codebase exploration.
+- Milestone 1 complete: 3 Explorers completed setup, UI, and service architecture analysis.
+- Found existing codebase setup intact, `npm run build` and `tests/fallback.test.ts` passing cleanly.
+- Commencing Milestone 2 implementation for R1 and R2.

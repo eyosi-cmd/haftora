@@ -33,20 +33,27 @@ Design, build, and integrate the "Straw Hat Bot" RAG investing chatbot into the 
 - Updated: 2026-07-28T23:36:00-04:00
 
 ## Key Decisions Made
-- Decomposed work into 5 milestones following the Project pattern.
-- Will spawn `teamwork_preview_explorer` to inspect existing repository structure and build/test configurations.
+- Milestone 1 complete. Detailed analysis produced by 3 explorers.
+- Combining R1 (KB, TF-IDF RAG, Live NASDAQ quote injection) and R2 (Luffy persona system prompt & financial guardrails) into Milestone 2.
+- Will spawn 1 Worker to implement R1 & R2 changes in `src/services/rag/`.
 
 ## Team Roster
 | Agent | Type | Work Item | Status | Conv ID |
 |-------|------|-----------|--------|---------|
-| Explorer 1 | teamwork_preview_explorer | Build & Setup Inspection | in-progress | 147fb415-4dac-49eb-9fdf-6c8d048592e6 |
-| Explorer 2 | teamwork_preview_explorer | Frontend Architecture Inspection | in-progress | 984f5fbd-79ab-464d-a4a7-00ed8b8a4090 |
-| Explorer 3 | teamwork_preview_explorer | RAG & Data Engine Analysis | in-progress | d4e72583-1cb6-4727-883b-fd66564009f1 |
+| Explorer 1 | teamwork_preview_explorer | Build & Setup Inspection | completed | 147fb415-4dac-49eb-9fdf-6c8d048592e6 |
+| Explorer 2 | teamwork_preview_explorer | Frontend Architecture Inspection | completed | 984f5fbd-79ab-464d-a4a7-00ed8b8a4090 |
+| Explorer 3 | teamwork_preview_explorer | RAG & Data Engine Analysis | completed | d4e72583-1cb6-4727-883b-fd66564009f1 |
+| Worker 1 | teamwork_preview_worker | R1 & R2 RAG Engine & Luffy Persona | completed | 748eea70-00e2-4890-81a5-7425f34201c0 |
+| Reviewer 1 | teamwork_preview_reviewer | M2 R1 & R2 Code Review | in-progress | 6a398eb9-d6d6-43d1-a8f0-2f92ac6c9585 |
+| Reviewer 2 | teamwork_preview_reviewer | M2 R1 & R2 Code Review | in-progress | b1551925-92af-41c5-84ce-24f21e39622d |
+| Challenger 1 | teamwork_preview_challenger | M2 Stress Testing | in-progress | 7392dc48-498f-4dc1-8314-1447138f7989 |
+| Challenger 2 | teamwork_preview_challenger | M2 Stress Testing | in-progress | de6fa970-6747-4ee5-8dd8-3a83bba5893d |
+| Auditor 1 | teamwork_preview_auditor | M2 Forensic Audit | in-progress | 472ed811-ac90-4078-8869-1fef5a859f8d |
 
 ## Succession Status
 - Succession required: no
-- Spawn count: 3 / 16
-- Pending subagents: 147fb415-4dac-49eb-9fdf-6c8d048592e6, 984f5fbd-79ab-464d-a4a7-00ed8b8a4090, d4e72583-1cb6-4727-883b-fd66564009f1
+- Spawn count: 9 / 16
+- Pending subagents: 6a398eb9-d6d6-43d1-a8f0-2f92ac6c9585, b1551925-92af-41c5-84ce-24f21e39622d, 7392dc48-498f-4dc1-8314-1447138f7989, de6fa970-6747-4ee5-8dd8-3a83bba5893d, 472ed811-ac90-4078-8869-1fef5a859f8d
 - Predecessor: none
 - Successor: not yet spawned
 
