@@ -12,6 +12,7 @@ import { PortfolioBuilderView } from './components/views/PortfolioBuilderView';
 import { CalculatorsView } from './components/views/CalculatorsView';
 import { InvestingMistakesView } from './components/views/InvestingMistakesView';
 import { ProfileView } from './components/views/ProfileView';
+import { ChatWidget } from './components/ChatWidget';
 
 const STORAGE_KEY = 'haftora_user_progress_v1';
 
@@ -216,6 +217,9 @@ export const App: React.FC = () => {
 
       {/* Footer with Compliance Notices */}
       <Footer />
+
+      {/* Captain Luffy Straw Hat RAG Investing Chatbot */}
+      <ChatWidget />
     </div>
   );
 };

@@ -1,62 +1,61 @@
-# BRIEFING — 2026-07-28T22:46:35Z
+# BRIEFING — 2026-07-28T23:36:00-04:00
 
 ## Mission
-Execute Growth & Monetization Strategy, QA & Security Audit, and test verification for the Haftora platform.
+Design, build, and integrate the "Straw Hat Bot" RAG investing chatbot into the Haftora application, ensuring all R1, R2, R3 requirements and acceptance criteria pass with 0 build/test errors.
 
 ## 🔒 My Identity
-- Archetype: orchestrator
+- Archetype: Project Orchestrator
 - Roles: orchestrator, user_liaison, human_reporter, successor
 - Working directory: C:\Users\anonn\Desktop\haftora\.agents\orchestrator
 - Original parent: top-level
-- Original parent conversation ID: top-level
+- Original parent conversation ID: 1bdc8ebf-d80b-4ce7-b15d-909246b6e5e3
 
 ## 🔒 My Workflow
-- **Pattern**: Project Pattern
-- **Scope document**: .agents/orchestrator/PROJECT.md
-1. **Decompose**: Split work into Milestones:
-   - Milestone 1: Growth & Monetization Strategy (`docs/GROWTH_AND_MONETIZATION_STRATEGY.md`)
-   - Milestone 2: QA & Security Audit (`docs/QA_DEFECT_REPORT.md`)
-   - Milestone 3: Test Verification (`tests/fallback.test.ts`, `scripts/test-live-console.ts`)
-2. **Dispatch & Execute**: Direct iteration loop (Explorer -> Worker -> Reviewer -> Challenger -> Auditor) per milestone.
-3. **On failure**: Retry, Replace, Skip, Redistribute, Redesign.
-4. **Succession**: Threshold = 16 spawns.
-- **Work items**:
-  1. Milestone 1: Growth & Monetization Strategy [in-progress]
-  2. Milestone 2: QA & Security Audit [pending]
-  3. Milestone 3: Test Verification [pending]
-- **Current phase**: 2
-- **Current focus**: Milestone 1 & 2 Exploration and Execution
+- **Pattern**: Project
+- **Scope document**: C:\Users\anonn\Desktop\haftora\.agents\orchestrator\plan.md
+1. **Decompose**:
+   - Milestone 1: Exploration & Architecture Inspection
+   - Milestone 2: R1 - Financial KB & RAG Engine (`src/services/rag/`)
+   - Milestone 3: R2 - Luffy Persona & System Prompt (`src/services/rag/luffyPersona.ts`)
+   - Milestone 4: R3 - React Floating Chatbot Widget (`src/components/ChatWidget.tsx`) & `App.tsx` Integration
+   - Milestone 5: E2E Verification, Tests (`tests/fallback.test.ts`), Build (`npm run build`), & Forensic Audit
+2. **Dispatch & Execute**: Direct iteration loop (Explorer → Worker → Reviewer / Challenger → Forensic Auditor) per milestone.
+3. **On failure**: Retry → Replace → Skip → Redistribute → Redesign → Escalate.
+4. **Succession**: At 16 spawns, write handoff.md, spawn successor.
 
 ## 🔒 Key Constraints
-- Never write, modify, or create source code files directly.
-- Never run build/test commands directly.
-- Delegate all work to subagents via invoke_subagent.
-- File-editing tools only for metadata/state files (.md) in .agents/ folder.
+- NEVER write, modify, or create source code files directly.
+- NEVER run build/test commands yourself — require workers to do so.
+- You MAY use file-editing tools ONLY for metadata/state files (.md) in your .agents/ folder.
 
 ## Current Parent
-- Conversation ID: top-level
-- Updated: not yet
+- Conversation ID: 1bdc8ebf-d80b-4ce7-b15d-909246b6e5e3
+- Updated: 2026-07-28T23:36:00-04:00
 
 ## Key Decisions Made
-- Decomposed deliverables into 3 distinct milestones.
-- Initializing project metadata in `.agents/orchestrator/`.
+- Decomposed work into 5 milestones following the Project pattern.
+- Will spawn `teamwork_preview_explorer` to inspect existing repository structure and build/test configurations.
 
 ## Team Roster
 | Agent | Type | Work Item | Status | Conv ID |
 |-------|------|-----------|--------|---------|
+| Explorer 1 | teamwork_preview_explorer | Build & Setup Inspection | in-progress | 147fb415-4dac-49eb-9fdf-6c8d048592e6 |
+| Explorer 2 | teamwork_preview_explorer | Frontend Architecture Inspection | in-progress | 984f5fbd-79ab-464d-a4a7-00ed8b8a4090 |
+| Explorer 3 | teamwork_preview_explorer | RAG & Data Engine Analysis | in-progress | d4e72583-1cb6-4727-883b-fd66564009f1 |
 
 ## Succession Status
 - Succession required: no
-- Spawn count: 0 / 16
-- Pending subagents: none
+- Spawn count: 3 / 16
+- Pending subagents: 147fb415-4dac-49eb-9fdf-6c8d048592e6, 984f5fbd-79ab-464d-a4a7-00ed8b8a4090, d4e72583-1cb6-4727-883b-fd66564009f1
 - Predecessor: none
 - Successor: not yet spawned
 
 ## Active Timers
-- Heartbeat cron: not started
+- Heartbeat cron: task-13
 - Safety timer: none
 
 ## Artifact Index
-- .agents/orchestrator/BRIEFING.md — Working memory index
-- .agents/orchestrator/progress.md — Liveness & status tracking
-- .agents/orchestrator/PROJECT.md — Architecture & milestone index
+- C:\Users\anonn\Desktop\haftora\.agents\orchestrator\ORIGINAL_REQUEST.md — Original request
+- C:\Users\anonn\Desktop\haftora\.agents\orchestrator\BRIEFING.md — Briefing state
+- C:\Users\anonn\Desktop\haftora\.agents\orchestrator\plan.md — Project plan
+- C:\Users\anonn\Desktop\haftora\.agents\orchestrator\progress.md — Execution progress
