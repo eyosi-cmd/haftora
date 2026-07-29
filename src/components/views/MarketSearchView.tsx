@@ -47,20 +47,20 @@ export const MarketSearchView: React.FC = () => {
     if (res) {
       setResults(res.results);
       setTotal(res.total);
-      
-      // Instantly generate initial quotes for all 12 items
-      const initialQuotes: Record<string, LiveMarketQuote> = { ...quotes };
-      for (const item of res.results) {
-        if (!initialQuotes[item.symbol]) {
-          initialQuotes[item.symbol] = await fetchLiveQuote(item.symbol);
-        }
-      }
-      setQuotes(initialQuotes);
+      setLoading(false);
+
+      // Fast non-blocking parallel live quote fetcher for all 12 search result cards
+      Promise.all(
+        res.results.map(async (item) => {
+          const liveQ = await fetchLiveQuote(item.symbol);
+          setQuotes(prev => ({ ...prev, [item.symbol]: liveQ }));
+        })
+      );
     } else {
       setResults([]);
       setTotal(0);
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   // Debounced search input handler
