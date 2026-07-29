@@ -13,9 +13,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onUserChange }) => {
 
   useEffect(() => {
     try {
-      // Point explicitly to the Netlify site identity endpoint
+      // Dynamic Netlify Identity endpoint init
+      const identityApiUrl = window.location.hostname.includes('netlify.app')
+        ? `${window.location.origin}/.netlify/identity`
+        : 'https://haftora.netlify.app/.netlify/identity';
+
       netlifyIdentity.init({
-        APIUrl: 'https://haftora.netlify.app/.netlify/identity',
+        APIUrl: identityApiUrl,
       });
 
       const user = netlifyIdentity.currentUser();
@@ -33,7 +37,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onUserChange }) => {
         if (onUserChange) onUserChange(null);
       });
     } catch (err) {
-      console.warn('[AuthModal] Netlify Identity init notice:', err);
+      // Silently handle any initialization notices
     }
 
     return () => {
