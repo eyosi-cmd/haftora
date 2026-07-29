@@ -181,15 +181,17 @@ export async function searchClientTickers(
 
     // Relevance-Weighted Results query (Exact Match > Symbol Prefix > Name Match)
     const orderClause = q
-      ? `ORDER BY CASE WHEN UPPER(symbol) = '${q}' THEN 1 WHEN UPPER(symbol) LIKE '${q}%' THEN 2 ELSE 3 END, is_etf DESC, symbol ASC`
+      ? `ORDER BY CASE WHEN UPPER(symbol) = ? THEN 1 WHEN UPPER(symbol) LIKE ? THEN 2 ELSE 3 END, is_etf DESC, symbol ASC`
       : `ORDER BY is_etf DESC, symbol ASC`;
+
+    const queryParams = q ? [q, `${q}%`, ...params, limit, offset] : [...params, limit, offset];
 
     const res = db.exec(
       `SELECT symbol, name, exchange, exchange_name, is_etf
        FROM tickers ${where}
        ${orderClause}
        LIMIT ? OFFSET ?`,
-      [...params, limit, offset]
+      queryParams
     );
 
     const rows = res[0]?.values || [];

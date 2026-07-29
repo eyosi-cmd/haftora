@@ -173,10 +173,12 @@ const Bogleheads3FundStudio: React.FC = () => {
   // 30 year projection
   const r = blendedReturn / 100;
   const n = 30;
-  const futureValue = Math.round(
-    initialAmount * Math.pow(1 + r, n) +
-    monthlyDeposit * 12 * ((Math.pow(1 + r, n) - 1) / r)
-  );
+  const futureValue = r === 0
+    ? Math.round(initialAmount + monthlyDeposit * 12 * n)
+    : Math.round(
+        initialAmount * Math.pow(1 + r, n) +
+        monthlyDeposit * 12 * ((Math.pow(1 + r, n) - 1) / r)
+      );
 
   const annualDividendIncome = Math.round(futureValue * (blendedYield / 100));
 

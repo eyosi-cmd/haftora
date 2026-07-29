@@ -10,6 +10,7 @@ import {
   Database, Activity, RotateCcw, Clock
 } from 'lucide-react';
 import { PieChart as RechartsPie, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import { injectFinancialProductSchema, updatePageMeta } from '../../utils/seo';
 
 // ── Fuzzy search: score a string against a query ──────────────────────────
 function fuzzyScore(target: string, query: string): number {
@@ -86,13 +87,21 @@ export const ETFExplorerView: React.FC = () => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Check if backend is online on mount
+  // Check if backend is online on mount & sync SEO
   useEffect(() => {
     getTickerStats().then(stats => {
       setBackendOnline(stats !== null);
       setTickerStats(stats);
     });
   }, []);
+
+  // Sync JSON-LD schema & meta title when selected ETF changes
+  useEffect(() => {
+    if (selectedETF) {
+      injectFinancialProductSchema(selectedETF.ticker, selectedETF.name, selectedETF.price, selectedETF.category);
+      updatePageMeta(`${selectedETF.ticker} (${selectedETF.name}) ETF Analysis`, selectedETF.description);
+    }
+  }, [selectedETF]);
 
   // Debounced live search
   useEffect(() => {
@@ -457,9 +466,33 @@ export const ETFExplorerView: React.FC = () => {
               </div>
             </div>
 
-            <p style={{ fontSize: '0.85rem', color: '#475569', lineHeight: 1.7, marginBottom: 14 }}>
+            <p style={{ fontSize: '0.85rem', color: '#475569', lineHeight: 1.7, marginBottom: 12 }}>
               {selectedETF.description}
             </p>
+
+            {/* Monetization Engine: Affiliate Broker CTA */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, padding: '0.65rem 0.85rem', background: '#F8FAFC', borderRadius: 12, border: '1px solid #E2E8F0', marginBottom: 14 }}>
+              <div style={{ fontSize: '0.75rem', color: '#475569', fontWeight: 600 }}>
+                Ready to invest in <strong style={{ color: '#0C1A27' }}>{selectedETF.ticker}</strong>?
+              </div>
+              <button
+                onClick={() => alert(`Brokerage Affiliate Redirect: Opening partner portal to trade ${selectedETF.ticker} with $0 commission.`)}
+                style={{
+                  background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: 999,
+                  padding: '0.35rem 0.85rem',
+                  fontSize: '0.73rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  boxShadow: '0 2px 8px rgba(16,185,129,0.25)',
+                  transition: 'all 0.15s ease'
+                }}
+              >
+                Trade $0 Commission →
+              </button>
+            </div>
 
             {/* Quick Metrics Row */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.6rem' }}>

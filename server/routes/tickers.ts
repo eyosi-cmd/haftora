@@ -104,6 +104,8 @@ router.get('/stats', async (_req: Request, res: Response) => {
   } catch (err) {
     res.status(500).json({ error: String(err) });
   }
+});
+
 // ── GET /api/tickers/quote/:symbol ─────────────────────────────────────────
 router.get('/quote/:symbol', async (req: Request, res: Response) => {
   try {

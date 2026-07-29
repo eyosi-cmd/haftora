@@ -176,7 +176,7 @@ export function calculateDividendGrowth(
     // Dividend grows over time
     currentYield = currentYield * (1 + dividendGrowthRatePercent / 100);
 
-    const yieldOnCost = (annualDiv / totalInvested) * 100;
+    const yieldOnCost = totalInvested > 0 ? (annualDiv / totalInvested) * 100 : 0;
 
     points.push({
       year,
@@ -190,6 +190,7 @@ export function calculateDividendGrowth(
 }
 
 export function formatCurrency(amount: number): string {
+  if (isNaN(amount) || !isFinite(amount)) return '$0';
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -198,5 +199,6 @@ export function formatCurrency(amount: number): string {
 }
 
 export function formatPercent(value: number): string {
+  if (isNaN(value) || !isFinite(value)) return '0.00%';
   return `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`;
 }

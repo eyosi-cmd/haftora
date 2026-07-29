@@ -44,7 +44,7 @@ export const CalculatorsView: React.FC<CalculatorsViewProps> = ({ onSaveScenario
 
     if (tab === 'dca') {
       title = 'DCA Simulation';
-      val = dcaFinal.dcaPortfolioValue;
+      val = dcaFinal.dcaBalance;
     } else if (tab === 'drip') {
       title = 'Dividend DRIP Calculation';
       val = dripFinal.portfolioValue;

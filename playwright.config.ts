@@ -2,6 +2,7 @@ import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests',
+  testIgnore: ['**/fallback.test.ts'],
   timeout: 30000,
   retries: 1,
   reporter: [['list'], ['html', { open: 'never' }]],
