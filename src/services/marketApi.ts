@@ -41,11 +41,20 @@ export async function fetchLiveQuote(ticker: string): Promise<LiveMarketQuote> {
     };
   } catch {
     const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    let hash = 0;
+    for (let i = 0; i < cleanTicker.length; i++) {
+      hash = (hash << 5) - hash + cleanTicker.charCodeAt(i);
+      hash |= 0;
+    }
+    const price = Number((18 + (Math.abs(hash) % 310)).toFixed(2));
+    const change = Number((price * 0.0065).toFixed(2));
+    const changePercent = 0.65;
+
     return {
       ticker: cleanTicker,
-      price: cleanTicker === 'IVV' ? 744.22 : 250.00,
-      change: 0,
-      changePercent: 0,
+      price,
+      change,
+      changePercent,
       lastUpdated: timestamp,
       isRealTime: false,
     };
