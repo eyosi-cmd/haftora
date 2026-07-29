@@ -94,16 +94,6 @@ export const MarketSearchView: React.FC = () => {
       {/* ── Hero Header ────────────────────────────────────────────── */}
       <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-            <span style={{ background: '#E0F2FE', color: '#0284C7', border: '1px solid #7DD3FC', borderRadius: 999, padding: '0.2rem 0.65rem', fontSize: '0.72rem', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-              <Database size={12} /> Live Wasm Database
-            </span>
-            {stats && (
-              <span style={{ background: '#ECFDF5', color: '#065F46', border: '1px solid #6EE7B7', borderRadius: 999, padding: '0.2rem 0.65rem', fontSize: '0.72rem', fontWeight: 700 }}>
-                {stats.total.toLocaleString()} Instruments Indexed
-              </span>
-            )}
-          </div>
           <h1 id="market-search-title" style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 900, fontSize: 'clamp(1.4rem,3vw,2rem)', color: '#0C1A27' }}>
             Universal Market Search
           </h1>
