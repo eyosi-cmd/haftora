@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { queryRAGChatbot, RAGChatResponse } from '../services/rag/ragEngine';
-import { STRAW_HAT_PERSONA } from '../services/rag/luffyPersona';
+import { HAFFY_TWO_PERSONA } from '../services/rag/luffyPersona';
 import { X, Send, Sparkles, Compass, ShieldAlert, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 
 interface ChatMessage {
@@ -20,9 +20,9 @@ export const ChatWidget: React.FC = () => {
     {
       id: 'msg-0',
       sender: 'bot',
-      text: `SHISHISHI! 🏴‍☠️ ${STRAW_HAT_PERSONA.greeting}`,
+      text: HAFFY_TWO_PERSONA.greeting,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-    }
+    },
   ]);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -67,7 +67,7 @@ export const ChatWidget: React.FC = () => {
         {
           id: `err-${Date.now()}`,
           sender: 'bot',
-          text: 'SHISHISHI! A stormy wave hit the network, but don\'t give up! Ask me again!',
+          text: 'Hello! A network issue occurred, but I’m still here to help — please try again.',
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         }
       ]);
@@ -80,7 +80,7 @@ export const ChatWidget: React.FC = () => {
     <>
       {/* ── FLOATING TRIGGER BUTTON ─────────────────────────────────── */}
       <button
-        id="btn-luffy-chat-trigger"
+        id="btn-haffy-chat-trigger"
         onClick={() => setIsOpen(!isOpen)}
         style={{
           position: 'fixed',
@@ -96,20 +96,20 @@ export const ChatWidget: React.FC = () => {
           cursor: 'pointer',
           display: 'flex',
           alignItems: 'center',
-          justify: 'center',
+          justifyContent: 'center',
           transition: 'transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)'
         }}
         className="hover:scale-110 active:scale-95"
-        title="Chat with Captain Luffy Straw Hat Bot"
+        title="Chat with Haffy Two"
       >
-        <div dangerouslySetInnerHTML={{ __html: STRAW_HAT_PERSONA.avatarSvg }} />
+        <div dangerouslySetInnerHTML={{ __html: HAFFY_TWO_PERSONA.avatarSvg }} />
         <span style={{ position: 'absolute', top: 2, right: 2, width: 12, height: 12, borderRadius: '50%', background: '#10B981', border: '2px solid white' }} />
       </button>
 
       {/* ── CHAT DRAWER / WINDOW ────────────────────────────────────── */}
       {isOpen && (
         <div
-          id="luffy-chat-window"
+          id="haffy-chat-window"
           className="animate-in"
           style={{
             position: 'fixed',
@@ -131,13 +131,13 @@ export const ChatWidget: React.FC = () => {
           {/* Header */}
           <div style={{ background: 'linear-gradient(135deg, #78350F 0%, #451A03 100%)', padding: '0.85rem 1.1rem', color: '#FEF3C7', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '2px solid #FACC15' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div style={{ width: 38, height: 38, borderRadius: '50%', background: '#FACC15', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #78350F' }} dangerouslySetInnerHTML={{ __html: STRAW_HAT_PERSONA.avatarSvg }} />
+              <div style={{ width: 38, height: 38, borderRadius: '50%', background: '#FACC15', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #78350F' }} dangerouslySetInnerHTML={{ __html: HAFFY_TWO_PERSONA.avatarSvg }} />
               <div>
                 <h4 style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 900, fontSize: '0.95rem', color: '#FFFBEB', margin: 0, lineHeight: 1.2 }}>
-                  {STRAW_HAT_PERSONA.name}
+                  {HAFFY_TWO_PERSONA.name}
                 </h4>
                 <span style={{ fontSize: '0.68rem', color: '#FDE68A', opacity: 0.95 }}>
-                  {STRAW_HAT_PERSONA.title}
+                  {HAFFY_TWO_PERSONA.title}
                 </span>
               </div>
             </div>
@@ -192,11 +192,11 @@ export const ChatWidget: React.FC = () => {
                     boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
                   }}
                 >
-                  <p style={{ margin: 0, whitespace: 'pre-line' }}>{msg.text}</p>
+                  <p style={{ margin: 0, whiteSpace: 'pre-line' }}>{msg.text}</p>
                   
                   {/* Sources tag if retrieved */}
                   {msg.sources && msg.sources.length > 0 && (
-                    <div style={{ marginTop: 6, pt: 6, borderTop: '1px solid rgba(255,255,255,0.1)', fontSize: '0.67rem', color: '#94A3B8' }}>
+                    <div style={{ marginTop: 6, paddingTop: 6, borderTop: '1px solid rgba(255,255,255,0.1)', fontSize: '0.67rem', color: '#94A3B8' }}>
                       📚 Knowledge Source: {msg.sources[0]}
                     </div>
                   )}
@@ -211,7 +211,7 @@ export const ChatWidget: React.FC = () => {
             {loading && (
               <div style={{ alignSelf: 'flex-start', background: '#1E293B', padding: '0.65rem 0.9rem', borderRadius: 16, border: '1px solid #334155', fontSize: '0.8rem', color: '#FACC15', display: 'flex', alignItems: 'center', gap: 6 }}>
                 <Sparkles size={14} className="animate-spin" />
-                <span>Captain Luffy is consulting the Grand Line charts…</span>
+                <span>Haffy Two is reviewing market data and financial guidance…</span>
               </div>
             )}
             <div ref={messagesEndRef} />
@@ -221,7 +221,7 @@ export const ChatWidget: React.FC = () => {
           <div style={{ padding: '0.75rem 0.85rem', background: '#0F172A', borderTop: '1px solid #334155', display: 'flex', gap: 8, alignItems: 'center' }}>
             <input
               type="text"
-              placeholder="Ask Captain Luffy about investing…"
+              placeholder="Ask Haffy Two about investing…"
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => { if (e.key === 'Enter') handleSendMessage(); }}
