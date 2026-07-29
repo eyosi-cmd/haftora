@@ -1,5 +1,5 @@
 import { FINANCIAL_KNOWLEDGE_BASE, KnowledgeChunk } from './knowledgeBase';
-import { formatHaffyResponse, HAFFY_SYSTEM_PROMPT } from './luffyPersona';
+import { formatHaffyResponse, LUFFY_SYSTEM_PROMPT } from './luffyPersona';
 import { fetchLiveQuote } from '../marketApi';
 
 export interface RAGChatResponse {
@@ -250,9 +250,9 @@ export async function queryRAGChatbot(userPrompt: string): Promise<RAGChatRespon
     }
   }
 
-  // 4. Synthesize Response using retrieved RAG context, quote data, and Haffy persona
+  // 3. Synthesize Response using retrieved RAG context, quote data, and Haffy Bot persona
   const rawBody = synthesizeRAGResponse(userPrompt, selectedSources, liveQuoteData);
-  const finalAnswer = formatHaffyResponse(rawBody, liveQuoteData);
+  const finalAnswer = formatHaffyResponse(rawBody, userPrompt, liveQuoteData);
 
   return {
     answer: finalAnswer,
