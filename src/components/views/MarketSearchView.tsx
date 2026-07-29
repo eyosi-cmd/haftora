@@ -203,15 +203,53 @@ export const MarketSearchView: React.FC = () => {
 
       {/* ── Dynamic Card Grid ──────────────────────────────────────── */}
       {loading ? (
-        <div className="card" style={{ padding: '4rem 1rem', textAlign: 'center', color: '#94A3B8' }}>
-          <RefreshCw size={36} className="animate-spin" style={{ margin: '0 auto 1rem', opacity: 0.5, color: '#0EA5E9' }} />
-          <div style={{ fontWeight: 700, color: '#475569' }}>Searching Market Database</div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
+          {[1, 2, 3, 4, 5, 6].map(n => (
+            <div key={n} className="card" style={{ padding: '1.1rem 1.2rem', height: 160, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', opacity: 0.75 }}>
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                  <div style={{ width: 70, height: 22, borderRadius: 6, background: '#E2E8F0', animation: 'pulse 1.5s infinite' }} />
+                  <div style={{ width: 45, height: 18, borderRadius: 999, background: '#F1F5F9' }} />
+                </div>
+                <div style={{ width: '85%', height: 16, borderRadius: 4, background: '#F1F5F9', marginBottom: 8 }} />
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', paddingTop: 10, borderTop: '1px solid #F1F5F9' }}>
+                <div>
+                  <div style={{ width: 80, height: 20, borderRadius: 4, background: '#E2E8F0', marginBottom: 6 }} />
+                  <div style={{ width: 50, height: 14, borderRadius: 4, background: '#F1F5F9' }} />
+                </div>
+                <div style={{ width: 65, height: 26, borderRadius: 999, background: '#E2E8F0' }} />
+              </div>
+            </div>
+          ))}
         </div>
       ) : results.length === 0 ? (
-        <div className="card" style={{ padding: '4rem 1rem', textAlign: 'center', color: '#94A3B8' }}>
-          <Search size={36} style={{ margin: '0 auto 1rem', opacity: 0.4 }} />
-          <div style={{ fontWeight: 700, color: '#475569', fontSize: '1.1rem' }}>No instruments found</div>
-          <div style={{ fontSize: '0.85rem', marginTop: 4 }}>Try searching for a ticker like "VOO" or company name like "Apple"</div>
+        <div className="card" style={{ padding: '3.5rem 1rem', textAlign: 'center', color: '#94A3B8' }}>
+          <Search size={40} style={{ margin: '0 auto 1rem', opacity: 0.35, color: '#0EA5E9' }} />
+          <div style={{ fontWeight: 800, color: '#0C1A27', fontSize: '1.15rem' }}>No instruments found</div>
+          <div style={{ fontSize: '0.85rem', marginTop: 4, color: '#64748B' }}>Try searching for popular tickers or company names below:</div>
+          
+          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 8, marginTop: '1.2rem' }}>
+            {['VOO', 'AAPL', 'NVDA', 'SCHD', 'TSLA', 'SPY', 'QQQ'].map(sym => (
+              <button
+                key={sym}
+                onClick={() => { setQuery(sym); setPage(1); }}
+                style={{
+                  background: '#F0F9FF',
+                  color: '#0284C7',
+                  border: '1px solid #BAE6FD',
+                  borderRadius: 999,
+                  padding: '0.35rem 0.85rem',
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease'
+                }}
+              >
+                + {sym}
+              </button>
+            ))}
+          </div>
         </div>
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
