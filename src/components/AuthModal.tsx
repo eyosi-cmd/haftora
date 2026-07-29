@@ -18,6 +18,26 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onUserChange }) => {
         ? `${window.location.origin}/.netlify/identity`
         : 'https://haftora.netlify.app/.netlify/identity';
 
+      // ── Stale token purge ──────────────────────────────────────────
+      // After each redeployment the GoTrue JWT secret rotates.
+      // If the cached token's api_url no longer matches our current
+      // identity endpoint, wipe it so we don't get 401 "Request ID" errors.
+      try {
+        const stored = localStorage.getItem('gotrue.user');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed?.api_url && !parsed.api_url.startsWith(window.location.origin)) {
+            localStorage.removeItem('gotrue.user');
+            localStorage.removeItem('gotrue.token');
+          }
+        }
+      } catch {
+        // If parsing fails, wipe both keys to be safe
+        localStorage.removeItem('gotrue.user');
+        localStorage.removeItem('gotrue.token');
+      }
+      // ──────────────────────────────────────────────────────────────
+
       netlifyIdentity.init({
         APIUrl: identityApiUrl,
       });
