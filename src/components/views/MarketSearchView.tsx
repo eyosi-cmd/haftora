@@ -152,18 +152,22 @@ export const MarketSearchView: React.FC = () => {
           {['VOO', 'AAPL', 'NVDA', 'SCHD', 'MSFT', 'VTI', 'TSLA', 'QQQ', 'BND', 'AMZN'].map(ticker => (
             <button
               key={ticker}
-              onClick={() => { setQuery(ticker); setPage(1); }}
+              id={`popular-chip-${ticker.toLowerCase()}`}
+              onClick={() => {
+                setQuery(ticker);
+                setInstrumentType('All');
+                setPage(1);
+              }}
               style={{
                 background: query.toUpperCase() === ticker ? '#0EA5E9' : '#F1F5F9',
                 color: query.toUpperCase() === ticker ? 'white' : '#475569',
-                border: '1px solid #CBD5E1',
+                border: `1px solid ${query.toUpperCase() === ticker ? '#0EA5E9' : '#CBD5E1'}`,
                 borderRadius: 999,
-                padding: '0.2rem 0.65rem',
-                fontSize: '0.72rem',
+                padding: '0.22rem 0.65rem',
+                fontSize: '0.74rem',
                 fontWeight: 700,
                 cursor: 'pointer',
-                fontFamily: "'JetBrains Mono', monospace",
-                transition: 'all 0.15s'
+                transition: 'all 0.15s ease'
               }}
             >
               {ticker}
@@ -233,7 +237,7 @@ export const MarketSearchView: React.FC = () => {
             {['VOO', 'AAPL', 'NVDA', 'SCHD', 'TSLA', 'SPY', 'QQQ'].map(sym => (
               <button
                 key={sym}
-                onClick={() => { setQuery(sym); setPage(1); }}
+                onClick={() => { setQuery(sym); setInstrumentType('All'); setPage(1); }}
                 style={{
                   background: '#F0F9FF',
                   color: '#0284C7',
